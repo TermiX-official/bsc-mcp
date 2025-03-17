@@ -1,9 +1,11 @@
 
 # BSC MCP Server
 
-<video controls width="600">
-  <source src="sources/BUSD_TRANSFER_MCP.mp4" type="video/mp4">
-</video>
+
+
+https://github.com/user-attachments/assets/b48caf37-2a0f-49c8-86f8-3aadbb986714
+
+
 
 [![npm version](https://img.shields.io/npm/v/base-mcp.svg)](https://www.npmjs.com/package/base-mcp)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -29,7 +31,11 @@ BSC MCP Server is a backend service for executing Binance Smart Chain (BSC) tran
 
 ## Requirements
 Ensure you have the following installed:
-- Node.js (v16 or later)
+- 
+
+https://github.com/user-attachments/assets/a99df084-34fc-4839-8831-ff3a2a4028d4
+
+Node.js (v16 or later)
 - npm or yarn
 - A valid BSC wallet private key
 
