@@ -16,12 +16,8 @@ BSC MCP Server is a backend service for executing Binance Smart Chain (BSC) tran
 - Retrieve wallet addresses
 - List wallet balances
 - Transfer funds between wallets
-- Deploy smart contracts 
-- Interact with Morpho vaults for onchain lending
 - Call contract functions 
-- Onramp funds via [Coinbase](https://www.coinbase.com/developer-platform/products/onramp)
 - Manage ERC20 tokens
-- Buy [OpenRouter](http://openrouter.ai/) credits with USDC
 
 ## Features
 - Transfer native BNB tokens to specified addresses.
@@ -32,8 +28,6 @@ BSC MCP Server is a backend service for executing Binance Smart Chain (BSC) tran
 ## Requirements
 Ensure you have the following installed:
 - 
-
-https://github.com/user-attachments/assets/a99df084-34fc-4839-8831-ff3a2a4028d4
 
 Node.js (v16 or later)
 - npm or yarn
