@@ -16,6 +16,8 @@ BSC MCP Server is a backend service designed to execute transactions on the Bina
 - Transfer BEP-20 tokens using contract addresses or symbols
 - Call and interact with smart contract functions
 - Securely manage BEP-20 tokens
+- create bsc memecoin
+- create bep20 token
 
 ## Features
 
