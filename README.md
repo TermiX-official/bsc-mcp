@@ -1,3 +1,7 @@
+
+
+https://github.com/user-attachments/assets/b3ed768a-6fd9-4b09-bcdd-dd122965f46e
+
 # BSC MCP Server
 
 ## Overview
