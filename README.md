@@ -17,7 +17,7 @@ BSC MCP Server is a backend service for executing Binance Smart Chain (BSC) tran
 - List wallet balances
 - Transfer funds between wallets
 - Call contract functions 
-- Manage ERC20 tokens
+- Manage BEP20 tokens
 
 ## Features
 - Transfer native BNB tokens to specified addresses.
@@ -65,7 +65,7 @@ Use the `transferNativeToken` tool with the following parameters:
 ```
 
 ### Transfer BEP-20 Tokens
-Use the `transferERC20Token` tool with the following parameters:
+Use the `transferBEP20Token` tool with the following parameters:
 ```json
 {
   "recipientAddress": "0xRecipientAddress",

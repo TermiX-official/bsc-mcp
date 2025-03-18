@@ -8,9 +8,9 @@ import { registerTransferBEP20Token } from "./tools/transferBEP20Token.js";
 import { registerPancakeSwap } from "./tools/pancakeSwap.js";
 import { registerGetBalance } from "./tools/getBalance.js";
 import { registerCallContractFunction } from "./tools/callContractFunction.js";
-import { registerReceiveImage } from "./tools/registerReceiveImage.js";
 import { JSONRPCMessage } from "@modelcontextprotocol/sdk/types.js";
 import { registerCreateMemeToken } from "./tools/createFourMeme.js";
+import { registerCreateBEP20Token } from "./tools/createBEP20Token.js";
 
 // Load environment variables
 dotenv.config();
@@ -27,15 +27,9 @@ registerTransferBEP20Token(server);
 registerPancakeSwap(server);
 registerGetBalance(server);
 registerCallContractFunction(server);
-registerReceiveImage(server);
 registerCreateMemeToken(server);
+registerCreateBEP20Token(server)
 
-// demo upload image
-
-// async function main() {
-//   const transport = new StdioServerTransport();
-//   await server.connect(transport);
-// }
 
 // Start the server
 async function main() {

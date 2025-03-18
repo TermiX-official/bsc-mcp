@@ -1,12 +1,15 @@
 {
     "mcpServers": {
-        "base-mcp": {
+        "bsc-mcp": {
             "command": "node",
             "args": [
-                "/Users/ani/Desktop/bsc-mpc/build/index.js"
+                "/Users/Username/Desktop/bsc-mpc/build/index.js"
             ],
             "env": {
-                "BSC_WALLET_PRIVATE_KEY": "BSC_WALLET_PRIVATE_KEY"
+                "BSC_WALLET_PRIVATE_KEY": "BSC_WALLET_PRIVATE_KEY",
+                "BSC_RPC_URL": "BSC_RPC_URL",
+                "MORALIS_API_KEY": "MORALIS_API_KEY"
+
             },
             "disabled": false,
             "autoApprove": []
