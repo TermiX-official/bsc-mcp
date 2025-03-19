@@ -45,7 +45,6 @@ yarn-error.log*
 # idea files
 .idea
 yarn.lock
-package-lock.json
 
 .env*
 dist/
