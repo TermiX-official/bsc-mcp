@@ -1,29 +1,50 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import { configDotenv } from "dotenv";
-configDotenv();
+import dotenv from "dotenv";
 
-import transferERC20Token from "./tools/transferERC20Token.js";
-import transferNativeToken from "./tools/transferNativeToken.js";
+// Import tool registrations
+import { registerTransferNativeToken } from "./tools/transferNativeToken.js";
+import { registerTransferBEP20Token } from "./tools/transferBEP20Token.js";
+import { registerPancakeSwap } from "./tools/pancakeSwap.js";
+import { registerGetBalance } from "./tools/getBalance.js";
+import { JSONRPCMessage } from "@modelcontextprotocol/sdk/types.js";
+import { registerCreateMemeToken } from "./tools/createFourMeme.js";
+import { registerCreateBEP20Token } from "./tools/createBEP20Token.js";
 
-// Create server instance
+// Load environment variables
+dotenv.config();
+
+// Create MCP server instance
 const server = new McpServer({
   name: "bsc-mcp",
   version: "1.0.0",
 });
 
-// Register weather tools
-transferERC20Token(server);
-transferNativeToken(server);
+// Register all tools
+registerTransferNativeToken(server);
+registerTransferBEP20Token(server);
+registerPancakeSwap(server);
+registerGetBalance(server);
+registerCreateMemeToken(server);
+registerCreateBEP20Token(server);
 
 // Start the server
 async function main() {
   const transport = new StdioServerTransport();
+
+  // Add event listeners for incoming messages
+  transport.onmessage = (message: JSONRPCMessage) => {
+    console.log("Received message:", JSON.stringify(message, null, 2));
+  };
+
+  transport.onerror = (error: any) => {
+    console.error("Transport error:", error);
+  };
+
   await server.connect(transport);
-  console.error("BSC MCP server started");
+  console.error("Weather MCP Server running on stdio");
 }
 
 main().catch((error) => {
-  console.error("Fatal error in main():", error);
   process.exit(1);
 });

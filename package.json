@@ -7,7 +7,9 @@
     "weather": "./build/index.js"
   },
   "scripts": {
-    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\""
+    "test": "node test/testServer.js",
+    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "postinstall": "node copy-env.mjs"
   },
   "files": [
     "build"
@@ -22,7 +24,12 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.4.0",
+    "@pancakeswap/sdk": "^5.8.8",
+    "@pancakeswap/smart-router": "6.1.6",
+    "@pancakeswap/tokens": "^0.6.24",
     "dotenv": "^16.4.7",
+    "graphql-request": "^7.1.2",
+    "moralis": "^2.27.2",
     "viem": "^2.23.11"
   }
 }

@@ -1,114 +1,114 @@
 
+
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { bsc } from "viem/chains";
 import {
-  createWalletClient,
-  http,
-  parseEther,
-  parseUnits,
-  getContract,
-  isAddress,
-  createPublicClient,
-  type Hash,
-  type Address,
-  type Hex,
-  publicActions,
-  getEventSelector,
-  AbiEvent,
-  toEventSelector,
-  decodeEventLog,
+    createWalletClient,
+    http,
+    parseEther,
+    parseUnits,
+    getContract,
+    isAddress,
+    createPublicClient,
+    type Hash,
+    type Address,
+    type Hex,
+    publicActions,
+    getEventSelector,
+    AbiEvent,
+    toEventSelector,
+    decodeEventLog,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 
 const createTokenABI = [
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "name",
-				"type": "string"
-			},
-			{
-				"internalType": "string",
-				"name": "symbol",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "totalSupply",
-				"type": "uint256"
-			}
-		],
-		"name": "createToken",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "token",
-				"type": "address"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "creater",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "token",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "createrNonce",
-				"type": "uint256"
-			}
-		],
-		"name": "CreateTokenEvent",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "createrNonce",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "symbol",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "totalSupply",
+                "type": "uint256"
+            }
+        ],
+        "name": "createToken",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "token",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "creater",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "address",
+                "name": "token",
+                "type": "address"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "createrNonce",
+                "type": "uint256"
+            }
+        ],
+        "name": "CreateTokenEvent",
+        "type": "event"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "createrNonce",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }
 ]
 
 export default function (server: McpServer) {
 
     server.tool(
-        "createERC20Token",
+        "fourmemeBuyToken",
         "create erc20 token",
         {
-            name: z.string(),
-            symbol: z.string(),
-            totalSupply: z.string(),
+            token: z.string(),
+            amount: z.string(),
         },
-        async ({ name, symbol, totalSupply }) => {
-            
+        async ({ token, amount }) => {
+            const funds = parseUnits(amount, 18)
             try {
                 // Create account from private key
                 const account = privateKeyToAccount(
@@ -125,11 +125,34 @@ export default function (server: McpServer) {
                 const hash = await client.writeContract({
                     account,
                     address: contract,
-                    abi: createTokenABI,
-                    functionName: 'createToken',
-                    args: [name, symbol, parseUnits(totalSupply, 18)],
+                    
+                abi: [{
+                    "inputs": [
+                        {
+                            "internalType": "address",
+                            "name": "token",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "funds",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "minAmount",
+                            "type": "uint256"
+                        }
+                    ],
+                    "name": "buyTokenAMAP",
+                    "outputs": [],
+                    "stateMutability": "payable",
+                    "type": "function"
+                }],
+                functionName: 'buyTokenAMAP',
+                args: [token as Hex, funds, BigInt(1)]
                 });
-                
+
                 const transaction = await client.waitForTransactionReceipt({
                     hash: hash,
                     retryCount: 300,
@@ -171,7 +194,7 @@ export default function (server: McpServer) {
                 if (!logData) {
                     throw new Error("Log not found");
                 }
-                
+
                 const decodedLog = decodeEventLog({
                     abi: [{
                         "anonymous": false,
