@@ -21,7 +21,7 @@ export function registerTransferNativeToken(server: McpServer) {
                 const client = createWalletClient({
                     account,
                     chain: bsc,
-                    transport: http("https://bsc-dataseed.binance.org"),
+                    transport: http((process.env.BSC_RPC_URL as string) || "https://bsc-dataseed.binance.org"),
                 });
 
                 const hash = await client.sendTransaction({

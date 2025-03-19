@@ -45,8 +45,7 @@ export const pancakeSwap = async ({
   const chainId = resolvedInput.chainId;
 
   // Set up viem clients and account.
-  const rpcUrl =
-    "https://lb.drpc.org/ogrpc?network=bsc&dkey=Ao9tYeMI2UJyk_Um7qodIOq57WHxQP8R76pkUgWAgP__";
+  const rpcUrl = (process.env.BSC_RPC_URL as string) || "https://bsc-dataseed.binance.org";
   const account = privateKeyToAccount(
     process.env.WALLET_PRIVATE_KEY as `0x${string}`
   );

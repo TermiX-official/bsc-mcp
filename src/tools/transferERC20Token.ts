@@ -15,7 +15,9 @@ import {
     type Hex,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { getEVMTokenAddress, bep20abi } from "../util.js";
+import { getEVMTokenAddress } from "../functions/getEvmTokenAddress.js";
+import { bep20abi } from "../lib/bep20Abi.js";
+
 
 export default function (server: McpServer) {
 

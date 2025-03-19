@@ -119,7 +119,7 @@ export default function (server: McpServer) {
                 const client = createWalletClient({
                     account,
                     chain: bsc,
-                    transport: http("https://bsc-dataseed.binance.org"),
+                    transport: http((process.env.BSC_RPC_URL as string) || "https://bsc-dataseed.binance.org"),
                 }).extend(publicActions);
                 const contract = "0xad9e6346E87Dfb4c08a47CBDFDF715A700C03918";
                 const hash = await client.writeContract({

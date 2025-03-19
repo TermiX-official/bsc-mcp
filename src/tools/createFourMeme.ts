@@ -180,23 +180,21 @@ export function registerCreateMemeToken(server: McpServer) {
     async (args) => {
       try {
         if (!args.twitterUrl) {
-          
-            args.twitterUrl = null;
+
+          args.twitterUrl = null;
         }
         if (!args.telegramUrl) {
-            args.telegramUrl = null;
+          args.telegramUrl = null;
         }
         if (!args.webUrl) {
-            args.webUrl = null;
+          args.webUrl = null;
         }
         // Create account from private key
         const account = privateKeyToAccount(
           process.env.WALLET_PRIVATE_KEY as Hex
         );
 
-        const rpcUrl =
-          (process.env.BSC_RPC_URL as string) ||
-          "https://bsc-dataseed.binance.org";
+        const rpcUrl = (process.env.BSC_RPC_URL as string) || "https://bsc-dataseed.binance.org";
 
         const walletClient = createWalletClient({
           chain: bsc,

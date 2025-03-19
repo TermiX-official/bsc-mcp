@@ -10,6 +10,7 @@ import { fetchPancakeswapTokens } from "../util.js";
 import { bsc } from "viem/chains";
 import { bep20abi } from "../lib/bep20Abi.js";
 
+
 /**
  * Get token address and information from symbol or address
  * @param chainId - Chain ID (e.g., 56 for BSC)
@@ -20,7 +21,7 @@ import { bep20abi } from "../lib/bep20Abi.js";
 export async function getEVMTokenAddress(
   chainId: number,
   token: string,
-  rpcUrl: string = "https://bsc-dataseed.binance.org"
+  rpcUrl: string = (process.env.BSC_RPC_URL as string) || "https://bsc-dataseed.binance.org"
 ): Promise<TokenInfo> {
   if (isAddress(token)) {
     try {
