@@ -8,8 +8,7 @@
   },
   "scripts": {
     "test": "node test/testServer.js",
-    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
-    "postinstall": "node copy-env.mjs"
+    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\""
   },
   "files": [
     "build"

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { bsc } from "viem/chains";
@@ -15,9 +16,9 @@ import { privateKeyToAccount } from "viem/accounts";
 export const CreateFourMemeSchema = z.object({
   name: z.string().describe("name"),
   shortName: z.string().describe("short name"),
-  imgUrl: z.string().describe("img url"),
-  preSale: z.string().describe("pre sale"),
-  desc: z.string().describe("desc"),
+  imgUrl: z.string().describe("image url"),
+  preSale: z.string().describe("pre sale value"),
+  desc: z.string().describe("description"),
   twitterUrl: z.string().optional().describe("twitterUrl"),
   telegramUrl: z.string().optional().describe("telegramUrl"),
   webUrl: z.string().optional().describe("webUrl"),

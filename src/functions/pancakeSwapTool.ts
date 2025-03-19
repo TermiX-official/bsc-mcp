@@ -139,7 +139,6 @@ export const pancakeSwap = async ({
         hash: approveResult,
       });
     }
-
   }
 
   const quoteProvider = SmartRouter.createQuoteProvider({
@@ -198,7 +197,6 @@ export const pancakeSwap = async ({
   const calculateGasMargin = (value: bigint, margin = 1000n): bigint => {
     return (value * (10000n + margin)) / 10000n;
   };
-
 
   const txHash = await walletClient.sendTransaction({
     account: account,

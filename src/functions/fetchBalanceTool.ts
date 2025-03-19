@@ -1,6 +1,14 @@
 import Moralis from "moralis";
 import { formatEther, formatUnits } from "viem";
 
+const ensureApiKey = () => {
+  if (!process.env.MORALIS_API_KEY) {
+    throw new Error(
+      "MORALIS_API_KEY is not set in the environment. Please set your API key in your environment variables. If you don't have one, please get an API key from https://docs.moralis.com/web3-data-api/evm/get-your-api-key."
+    );
+  }
+};
+
 const formatTokenDigits = (
   value: bigint,
   tokenDecimal: number,
@@ -59,10 +67,11 @@ const getBSCBalance = async (address: string) => {
 };
 
 const getBNBNativeBalance = async (address: string) => {
+  ensureApiKey();
   try {
     if (!Moralis.Core.isStarted) {
       await Moralis.start({
-        apiKey: process.env.NEXT_PUBLIC_MORALIS_API,
+        apiKey: process.env.MORALIS_API_KEY,
       });
     }
     const chain = "0x38";

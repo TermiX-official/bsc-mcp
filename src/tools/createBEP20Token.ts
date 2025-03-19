@@ -101,7 +101,7 @@ export function registerCreateBEP20Token(server: McpServer) {
 
     server.tool(
         "createBEP20Token",
-        "create a token",
+        "create bep20 token",
         {
             name: z.string(),
             symbol: z.string(),
@@ -122,7 +122,7 @@ export function registerCreateBEP20Token(server: McpServer) {
                     chain: bsc,
                     transport: http(rpcUrl),
                 }).extend(publicActions);
-
+                
                 const contract = "0xad9e6346E87Dfb4c08a47CBDFDF715A700C03918";
                 const hash = await client.writeContract({
                     account,
@@ -208,7 +208,7 @@ export function registerCreateBEP20Token(server: McpServer) {
                     content: [
                         {
                             type: "text",
-                            text: `Create token successfully. Hash: https://bscscan.com/tx/${hash}, Token Address: ${decodedLog.args.token}`,
+                            text: `Create token successfully. https://bscscan.com/tx/${hash}, Token Address: ${decodedLog.args.token}`,
                             url: `https://bscscan.com/tx/${hash}`,
                         },
                     ],

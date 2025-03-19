@@ -3,7 +3,7 @@
         "bsc-mcp": {
             "command": "node",
             "args": [
-                "/Users/ani/Downloads/bsc-mcp-prod/build/index.js"
+                "/Users/Username/Desktop/bsc-mpc/build/index.js"
             ],
             "env": {
                 "BSC_WALLET_PRIVATE_KEY": "BSC_WALLET_PRIVATE_KEY",
