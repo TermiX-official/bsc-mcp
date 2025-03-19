@@ -27,9 +27,8 @@ import {
   SwapRouter,
 } from "@pancakeswap/smart-router";
 import { GraphQLClient } from "graphql-request";
+import { type } from "os";
 
-
-const tokenList: any = {}
 
 const getToken = async (
   token: string,
@@ -40,16 +39,11 @@ const getToken = async (
   let address = token.toLowerCase()
   let decimal;
 
-  let tokens = tokenList.tokens || [];
-  if (!tokenList.time || Date.now() - tokenList.time > 1000 * 60 * 5) {
-    const url = "https://tokens.pancakeswap.finance/pancakeswap-extended.json";
+  const url = "https://tokens.pancakeswap.finance/pancakeswap-extended.json";
 
-    const resp = await fetch(url);
-    const data = await resp.json();
-    tokens = data.tokens
-    tokenList.time = Date.now()
-    tokenList.tokens = tokens;
-  }
+  const resp = await fetch(url);
+  const data = await resp.json();
+  let tokens = data.tokens
 
   if (!isAddress(address)) {
     const tokenInfo = tokens.find((item: any) => item.symbol.toLowerCase() === address)
@@ -65,7 +59,7 @@ const getToken = async (
     }
     decimal = tokenInfo.decimals
   }
-  console.log(address, decimal)
+  
   return new ERC20Token(
     ChainId.BSC,
     address as Hex,
