@@ -2,9 +2,9 @@ import Moralis from "moralis";
 import { formatEther, formatUnits } from "viem";
 
 const ensureApiKey = () => {
-  if (!process.env.MORALIS_API_KEY) {
+  if (!process.env.NEXT_PUBLIC_MORALIS_API) {
     throw new Error(
-      "MORALIS_API_KEY is not set in the environment. Please set your API key in your environment variables. If you don't have one, please get an API key from https://docs.moralis.com/web3-data-api/evm/get-your-api-key."
+      "NEXT_PUBLIC_MORALIS_API is not set in the environment. Please set your API key in your environment variables. If you don't have one, please get an API key from https://docs.moralis.com/web3-data-api/evm/get-your-api-key."
     );
   }
 };

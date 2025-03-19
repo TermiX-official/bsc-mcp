@@ -10,6 +10,8 @@ import { registerGetBalance } from "./tools/getBalance.js";
 import { JSONRPCMessage } from "@modelcontextprotocol/sdk/types.js";
 import { registerCreateMemeToken } from "./tools/createFourMeme.js";
 import { registerCreateBEP20Token } from "./tools/createBEP20Token.js";
+import { registerBuyMemeToken } from "./tools/buyMemeToken.js";
+import { registerSellMemeToken } from "./tools/sellMemeToken.js";
 
 // Load environment variables
 dotenv.config();
@@ -27,6 +29,8 @@ registerPancakeSwap(server);
 registerGetBalance(server);
 registerCreateMemeToken(server);
 registerCreateBEP20Token(server);
+registerBuyMemeToken(server);
+registerSellMemeToken(server);
 
 // Start the server
 async function main() {
