@@ -14,7 +14,7 @@ export function registerGetBalance(server: McpServer) {
       try {
         if (address === '' || !address) {
           const account = privateKeyToAccount(
-                    process.env.WALLET_PRIVATE_KEY as `0x${string}`
+                    process.env.BSC_WALLET_PRIVATE_KEY as `0x${string}`
                   );
           address = account.address
         }
