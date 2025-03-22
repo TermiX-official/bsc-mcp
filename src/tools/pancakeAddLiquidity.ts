@@ -33,7 +33,7 @@ export function registerPancakeAddLiquidity(server: McpServer) {
 
             try {
                 const account = privateKeyToAccount(
-                  process.env.WALLET_PRIVATE_KEY as `0x${string}`
+                  process.env.BSC_WALLET_PRIVATE_KEY as `0x${string}`
                 );
                 const rpcUrl = process.env.BSC_RPC_URL as string || "";
                 const client = createWalletClient({

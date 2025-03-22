@@ -6,7 +6,7 @@ import dotenv from "dotenv";
 import { registerTransferNativeToken } from "./tools/transferNativeToken.js";
 import { registerTransferBEP20Token } from "./tools/transferBEP20Token.js";
 import { registerPancakeSwap } from "./tools/pancakeSwap.js";
-import { registerGetBalance } from "./tools/getBalance.js";
+import { registerGetWalletInfo } from "./tools/getWalletInfo.js";
 import { JSONRPCMessage } from "@modelcontextprotocol/sdk/types.js";
 import { registerCreateMemeToken } from "./tools/createFourMeme.js";
 import { registerCreateBEP20Token } from "./tools/createBEP20Token.js";
@@ -29,7 +29,7 @@ const server = new McpServer({
 registerTransferNativeToken(server);
 registerTransferBEP20Token(server);
 registerPancakeSwap(server);
-registerGetBalance(server);
+registerGetWalletInfo(server);
 registerCreateMemeToken(server);
 registerCreateBEP20Token(server);
 registerBuyMemeToken(server);

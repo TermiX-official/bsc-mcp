@@ -9,6 +9,7 @@ import {
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { myPosition } from "../functions/pancakeSwapPosition.js";
+import { bigIntReplacer } from "../util.js";
 
 export function registerPancakeMyPosition(server: McpServer) {
 
@@ -21,7 +22,7 @@ export function registerPancakeMyPosition(server: McpServer) {
 
             try {
                 const account = privateKeyToAccount(
-                  process.env.WALLET_PRIVATE_KEY as `0x${string}`
+                  process.env.BSC_WALLET_PRIVATE_KEY as `0x${string}`
                 );
                 const rpcUrl = process.env.BSC_RPC_URL as string || "";
                 const client = createWalletClient({
@@ -35,7 +36,7 @@ export function registerPancakeMyPosition(server: McpServer) {
                     content: [
                         {
                             type: "text",
-                            text: `get user potitions successfully. ${JSON.stringify(positions)}`
+                            text: `get user potitions successfully. ${JSON.stringify(positions, bigIntReplacer)}`
                         },
                     ],
                 };

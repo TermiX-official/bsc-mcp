@@ -2,7 +2,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { Address, Hex, PublicActions, WalletClient, createWalletClient, http, parseAbi, publicActions } from "viem";
+import { Address, Hex, PublicActions, WalletClient, createWalletClient, formatUnits, http, parseAbi, parseEther, parseUnits, publicActions } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { bsc } from "viem/chains";
 
@@ -40,7 +40,6 @@ export const myPosition = async (
         throw new Error('Wallet not connected');
     }
 
-
     const balance = await client.readContract({
         abi: masterChefV3ABI,
         address: POSITION_MANAGER_ADDRESS,
@@ -48,8 +47,8 @@ export const myPosition = async (
         args: [account.address],
     })
 
+
     if (Number(balance) === 0) {
-        console.log('No positions found.');
         return;
     }
 
@@ -84,7 +83,6 @@ export const myPosition = async (
         contracts: positionCalls,
         allowFailure: false,
     }) as any[]
-    console.log(positions)
 
     const getTokenInfo = async (token: Address) => {
         const infoCalls = [
@@ -131,8 +129,6 @@ export const myPosition = async (
         }
     })) as any[]
 
-    console.log(poolTokenInfos);
-
     const poolCalls = []
     for (const position of positions) {
         const poolCall = {
@@ -152,7 +148,6 @@ export const myPosition = async (
         contracts: poolCalls,
         allowFailure: false,
     }) as any[]
-    console.log(pools)
 
     const slot0Calls = []
     for (const pool of pools) {
@@ -167,7 +162,6 @@ export const myPosition = async (
         contracts: slot0Calls,
         allowFailure: false,
     }) as any[]
-    console.log(slot0s)
 
     const positionInfos = []
     for (let i = 0; i < pools.length; i++) {
@@ -199,9 +193,13 @@ export const myPosition = async (
             ...positionInfo,
             amount0,
             amount1,
+            amount0Format: formatUnits(BigInt(amount0), Number(positionInfo.token0.decimals)),
+            amount1Format: formatUnits(BigInt(amount1), Number(positionInfo.token1.decimals)),
+            
         })
     }
-    console.log(positionInfos)
+
+    return positionInfos;
 }
 
 
