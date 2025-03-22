@@ -172,6 +172,7 @@ export const myPosition = async (
             liquidity: positions[i][7],
             ...poolTokenInfos[i],
             feeTier: positions[i][4],
+            positionId: nftIds[i],
         }
         let amount0;
         let amount1;
