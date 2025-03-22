@@ -14,6 +14,7 @@ import { registerBuyMemeToken } from "./tools/buyMemeToken.js";
 import { registerSellMemeToken } from "./tools/sellMemeToken.js";
 import { registerPancakeAddLiquidity } from "./tools/pancakeAddLiquidity.js";
 import { registerPancakeMyPosition } from "./tools/pancakeMyPosition.js";
+import { registerGoplusSecurityCheck } from "./tools/goplusSecurityCheck.js";
 
 // Load environment variables
 dotenv.config();
@@ -35,6 +36,7 @@ registerBuyMemeToken(server);
 registerSellMemeToken(server);
 registerPancakeAddLiquidity(server);
 registerPancakeMyPosition(server);
+registerGoplusSecurityCheck(server);
 
 // Start the server
 async function main() {

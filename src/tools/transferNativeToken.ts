@@ -15,7 +15,7 @@ export function registerTransferNativeToken(server: McpServer) {
     async ({ recipientAddress, amount }) => {
       try {
         const account = privateKeyToAccount(
-          process.env.WALLET_PRIVATE_KEY as `0x${string}`
+          process.env.BSC_WALLET_PRIVATE_KEY as `0x${string}`
         );
 
         const rpcUrl = process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org";

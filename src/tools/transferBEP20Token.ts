@@ -26,7 +26,7 @@ export function registerTransferBEP20Token(server: McpServer) {
         );
 
         const account = privateKeyToAccount(
-          process.env.WALLET_PRIVATE_KEY as `0x${string}`
+          process.env.BSC_WALLET_PRIVATE_KEY as `0x${string}`
         );
 
         const client = createWalletClient({

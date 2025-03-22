@@ -28,7 +28,7 @@ export function registerBuyMemeToken(server: McpServer) {
             try {
                 // Create account from private key
                 const account = privateKeyToAccount(
-                    process.env.WALLET_PRIVATE_KEY as Hex
+                    process.env.BSC_WALLET_PRIVATE_KEY as Hex
                 );
 
                 const rpcUrl = process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org";

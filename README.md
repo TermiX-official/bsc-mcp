@@ -51,7 +51,7 @@ npm install  # or yarn install
 To configure the server, create a `.env` file in the root directory and specify the following variables:
 
 ```sh
-WALLET_PRIVATE_KEY=your_private_key_here
+BSC_WALLET_PRIVATE_KEY=your_private_key_here
 BSC_RPC_URL=https://bsc-dataseed.binance.org
 MORALIS_API_KEY=your_moralis_api_key_here  # Optional: Use your Moralis API key if you want to fetch token balances from Moralis 
 ```
