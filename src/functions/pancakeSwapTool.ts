@@ -18,6 +18,7 @@ import {
   ERC20Token,
   Native,
   Percent,
+  Token,
   TradeType,
 } from "@pancakeswap/sdk";
 import {
@@ -30,7 +31,7 @@ import { GraphQLClient } from "graphql-request";
 import { type } from "os";
 
 
-const getToken = async (
+export const getToken = async (
   token: string,
 ) => {
   if (token.toUpperCase() === "BNB") {
@@ -44,6 +45,7 @@ const getToken = async (
   const resp = await fetch(url);
   const data = await resp.json();
   let tokens = data.tokens
+  let symbol;
 
   if (!isAddress(address)) {
     const tokenInfo = tokens.find((item: any) => item.symbol.toLowerCase() === address)
@@ -52,19 +54,21 @@ const getToken = async (
     }
     address = tokenInfo.address
     decimal = tokenInfo.decimals
+    symbol = tokenInfo.symbol
   } else {
     const tokenInfo = tokens.find((item: any) => item.address.toLowerCase() === address)
     if (!tokenInfo) {
       throw new Error("Token not found");
     }
     decimal = tokenInfo.decimals
+    symbol = tokenInfo.symbol
   }
   
-  return new ERC20Token(
+  return new Token(
     ChainId.BSC,
     address as Hex,
     decimal,
-    '',
+    symbol,
   )
 
 
