@@ -1,13 +1,14 @@
 {
   "name": "bnbchain-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "node test/testServer.js",
     "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
     "init": "node ./build/init.js",
-    "init:build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\" && node ./build/init.js"
+    "init:build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\" && node ./build/init.js",
+    "publish:auto": "node scripts/publish.cjs"
   },
   "files": [
     "build"
