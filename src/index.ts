@@ -6,13 +6,16 @@ import dotenv from "dotenv";
 import { registerTransferNativeToken } from "./tools/transferNativeToken.js";
 import { registerTransferBEP20Token } from "./tools/transferBEP20Token.js";
 import { registerPancakeSwap } from "./tools/pancakeSwap.js";
-import { registerGetBalance } from "./tools/getBalance.js";
+import { registerGetWalletInfo } from "./tools/getWalletInfo.js";
 import { JSONRPCMessage } from "@modelcontextprotocol/sdk/types.js";
 import { registerCreateMemeToken } from "./tools/createFourMeme.js";
 import { registerCreateBEP20Token } from "./tools/createBEP20Token.js";
 import { registerBuyMemeToken } from "./tools/buyMemeToken.js";
 import { registerSellMemeToken } from "./tools/sellMemeToken.js";
+import { registerPancakeAddLiquidity } from "./tools/pancakeAddLiquidity.js";
+import { registerPancakeMyPosition } from "./tools/pancakeMyPosition.js";
 import { registerGoplusSecurityCheck } from "./tools/goplusSecurityCheck.js";
+import { registerPancakeRemovePosition } from "./tools/pancakeRemovePosition.js";
 
 // Load environment variables
 dotenv.config();
@@ -27,11 +30,14 @@ const server = new McpServer({
 registerTransferNativeToken(server);
 registerTransferBEP20Token(server);
 registerPancakeSwap(server);
-registerGetBalance(server);
+registerGetWalletInfo(server);
 registerCreateMemeToken(server);
 registerCreateBEP20Token(server);
 registerBuyMemeToken(server);
 registerSellMemeToken(server);
+registerPancakeAddLiquidity(server);
+registerPancakeMyPosition(server);
+registerPancakeRemovePosition(server);
 registerGoplusSecurityCheck(server);
 
 // Start the server

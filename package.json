@@ -1,14 +1,13 @@
 {
-  "name": "mcp-quickstart-ts",
+  "name": "bnbchain-mcp",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
-  "bin": {
-    "weather": "./build/index.js"
-  },
   "scripts": {
     "test": "node test/testServer.js",
-    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\""
+    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "init": "node ./build/init.js",
+    "init:build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\" && node ./build/init.js"
   },
   "files": [
     "build"
@@ -18,7 +17,10 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/figlet": "^1.7.0",
+    "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.10.0",
+    "@types/prompts": "^2.4.9",
     "typescript": "^5.8.2"
   },
   "dependencies": {
@@ -27,9 +29,14 @@
     "@pancakeswap/sdk": "^5.8.8",
     "@pancakeswap/smart-router": "6.1.6",
     "@pancakeswap/tokens": "^0.6.24",
+    "chalk": "^5.4.1",
     "dotenv": "^16.4.7",
+    "figlet": "^1.8.0",
+    "fs-extra": "^11.3.0",
     "graphql-request": "^7.1.2",
     "moralis": "^2.27.2",
+    "ora": "^8.2.0",
+    "prompts": "^2.4.2",
     "viem": "^2.23.11"
   }
 }

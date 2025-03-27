@@ -3,10 +3,10 @@ import { z } from "zod";
 import { getBalance } from "../functions/fetchBalanceTool.js";
 import { privateKeyToAccount } from "viem/accounts";
 
-export function registerGetBalance(server: McpServer) {
+export function registerGetWalletInfo(server: McpServer) {
   server.tool(
-    "getBalance",
-    "Fetch native and token balances for an address",
+    "getWalletInfo",
+    "Get wallet info for an address",
     {
       address: z.string().optional(),
     },
@@ -29,7 +29,7 @@ export function registerGetBalance(server: McpServer) {
           content: [
             {
               type: "text",
-              text: `Native Balance (BNB): ${balance.nativeBalance}\n\nToken Balances:\n${tokensStr}`,
+              text: `Native Balance (BNB): ${balance.nativeBalance}\n\nToken Balances:\n${tokensStr}\n\nWallet Address: ${address}`,
             },
           ],
         };
