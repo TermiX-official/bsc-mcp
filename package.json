@@ -1,6 +1,6 @@
 {
   "name": "bnbchain-mcp",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "main": "index.js",
   "type": "module",
   "bin": {
@@ -16,9 +16,38 @@
   "files": [
     "build"
   ],
-  "keywords": [],
+  "keywords": [
+    "binance-smart-chain",
+    "bsc",
+    "blockchain",
+    "web3",
+    "cryptocurrency",
+    "defi",
+    "model-context-protocol",
+    "mcp",
+    "claude-integration",
+    "ai-agents",
+    "token-transfers",
+    "smart-contracts",
+    "pancakeswap",
+    "bep20",
+    "swap",
+    "liquidity",
+    "wallet-management",
+    "blockchain-tools",
+    "crypto-cli",
+    "defi-tools",
+    "meme-tokens",
+    "token-deployment",
+    "blockchain-development",
+    "web3-infrastructure",
+    "crypto-automation",
+    "token-security",
+    "moralis-integration",
+    "bnb-chain"
+  ],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "description": "",
   "devDependencies": {
     "@types/figlet": "^1.7.0",

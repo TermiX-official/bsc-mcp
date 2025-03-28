@@ -51,6 +51,4 @@ export async function main() {
     };
 
     await server.connect(transport);
-
-    console.log("✅ BSC MCP Server is now running via stdio.");
 }

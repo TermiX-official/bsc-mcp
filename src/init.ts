@@ -22,9 +22,9 @@ const onCancel = () => {
 
 // Show Banner
 const showBanner = () => {
-    const banner = figlet.textSync('BSC MCP', { font: 'Big' });
+    const banner = figlet.textSync('BNB Chain MCP ', { font: 'Big' });
     console.log(yellow(banner));
-    console.log(yellow('🚀 Welcome to the BSC MCP Configurator\n'));
+    console.log(yellow('🚀 Welcome to the BNB Chain MCP Configurator\n'));
 };
 
 // User Input Types
@@ -40,7 +40,9 @@ const getInputs = async (): Promise<UserInputs> => {
         {
             type: 'password',
             name: 'moralis',
-            message: '🔑 Enter Moralis API Key (optional):',
+            message: '🔑 Enter Moralis API Key:( Checkout the link for more info : https://docs.moralis.com/web3-data-api/evm/get-your-api-key )',
+            validate: (val: string) =>
+                val.trim() === '' ? 'Moralis API Key is required!' : true,
         },
         {
             type: 'password',
@@ -102,7 +104,7 @@ const configureClaude = async (config: object): Promise<boolean> => {
     }
 
     await fs.writeJSON(claudePath, config, { spaces: 2 });
-    console.log(yellow('✅ BSC MCP configured for Claude Desktop.'));
+    console.log(yellow('✅ BNB Chain MCP configured for Claude Desktop.'));
     return true;
 };
 
