@@ -1,137 +1,143 @@
 
-## 📦 BNBChain MCP – Binance Smart Chain Tool Server (CLI Configurable)
-
-> **A plug-and-play CLI server for executing transactions, interacting with smart contracts, and deploying tokens on the Binance Smart Chain (BSC) using the Model Context Protocol (MCP).**
 
 ---
 
-### 🚀 Features
+## 📦 BNBChain MCP – Binance Smart Chain Tool Server (MCP + CLI Ready)
 
-- ⚡ One-line CLI initialization (`npm run init`)
-- 🔐 Secure `.env` generation with private key management
-- 🪙 Supports native BNB and BEP-20 token transfers
-- 🧠 Claude Desktop & MCP compatible
-- 🔄 PancakeSwap integration for token swapping
-- 🔥 Launch meme tokens or BEP-20 tokens in seconds
+> A plug-and-play MCP tool server to **send BNB**, **transfer BEP-20 tokens**, **deploy tokens**, and **interact with smart contracts** on the **Binance Smart Chain (BSC)** — built for **Claude Desktop**, **AI agents**, and **developers.**
 
 ---
 
-### 📦 Installation
+### ⚙️ Core Capabilities
+
+- 🔐 Secure token & native transfers via CLI or MCP
+- 🧱 Interact with smart contracts (ABI/function-based)
+- 🔄 PancakeSwap integration for swaps & liquidity
+- ⚙️ Create meme tokens & deploy BEP-20 smart contracts
+- 🧠 Native Claude Desktop integration via MCP
+- 🔧 CLI-ready, MCP-compliant, developer-friendly
+
+---
+
+## 🛠 Installation & Setup
+
+### 1. Clone & Install
 
 ```bash
 npm install -g bnbchain-mcp
-# or if using locally:
-git clone https://github.com/TermiX-official/bsc-mcp.git
-cd bsc-mcp
-npm install
 ```
 
----
-
-### ⚙️ Configuration (via CLI)
-
-Run the setup wizard:
+### 2. Run the CLI Setup Wizard
 
 ```bash
-npm run init
-# or
-yarn init
+bnbchain-mcp --init
 ```
 
-This will prompt you to input:
+You’ll be prompted to enter:
 
-1. **Moralis API Key** *(optional)* – used to fetch wallet balances  
-2. **Wallet Private Key** *(required)* – your BSC wallet private key  
-3. **BSC RPC URL** *(optional)* – defaults to:
-   ```
-   https://bsc-dataseed.binance.org
-   ```
-
-✅ Automatically generates `.env` and `config.json`  
-✅ Optionally integrates into **Claude Desktop**
+- ✅ **Moralis API Key** *(optional)*  
+- ✅ **BSC Wallet Private Key** *(required)*  
+- ✅ **Custom RPC URL** *(optional, defaults to:* `https://bsc-dataseed.binance.org` *)
 
 ---
 
-### 🔑 Getting Your Moralis API Key
+## 🧠 Claude Desktop Integration
 
-Visit: [https://docs.moralis.com/2.0/web3-data-api/evm/get-your-api-key](https://docs.moralis.com/2.0/web3-data-api/evm/get-your-api-key)
+After CLI setup, the tool can **auto-configure itself into Claude Desktop**.
 
-Steps:
-1. Sign up at [https://moralis.io](https://moralis.io)
-2. Go to the Web3 Data → API Keys section
-3. Copy your EVM-compatible API key and paste it during CLI setup
-
----
-
-### 🧠 Claude Desktop Integration
-
-After CLI setup, the tool can auto-integrate into Claude Desktop by modifying:
+📍 File modified:
 
 ```
 ~/Library/Application Support/Claude/claude_desktop_config.json
 ```
 
-📍 On success, you'll see:
-
-```
-✅ BSC MCP configured for Claude Desktop.
-```
+Claude will detect and run this MCP server with your selected tools.
 
 ---
 
-### 🧪 Running the MCP Server
+## 🔨 Supported MCP Tools
 
-After setup, start the server manually if needed:
+| Tool Name             | Description                              |
+|----------------------|------------------------------------------|
+| `transferNativeToken` | Send BNB to a wallet                     |
+| `transferBEP20Token`  | Transfer BEP-20 token via symbol/address |
+| `pancakeSwap`         | Swap tokens via PancakeSwap              |
+| `createFourMeme`      | Create meme token on Four.Meme           |
+| `createBEP20Token`    | Deploy a BEP-20 contract                 |
+| `getBalance`          | Get token + native balance               |
+| `callContractFunction`| Custom contract calls via ABI            |
+| `getWalletInfo`       | Get wallet info for an address           |
+| `securityCheck`       | Check token security of BSC tokens       |
+| `pancakeAddLiquidity` | Add liquidity to PancakeSwap             |
+| `pancakeMyPosition`   | View your PancakeSwap positions          |
+| `pancakeRemovePosition`| Remove liquidity from PancakeSwap        |
+| `sellMemeToken`        | Sell meme token on Four.Meme             |
+| ...and more coming soon 🔧 |
 
+---
+
+## 🧪 Development Workflow
+
+### Compile TypeScript:
+```bash
+npm run build
+```
+
+### Start MCP Server:
 ```bash
 npm start
 # or
 node build/index.js
 ```
 
----
-
-### 🔨 Supported Tools
-
-- `transferNativeToken` – Send BNB
-- `transferBEP20Token` – Send BEP-20 tokens
-- `pancakeSwap` – Swap tokens via PancakeSwap
-- `createFourMeme` – Launch meme tokens on Four.Meme
-- `createBEP20Token` – Deploy a custom BEP-20 token
-- `getBalance` – Get token and native balances
-- `callContractFunction` – Interact with smart contracts
-
----
-
-### 📁 Example `.env` (auto-generated)
-
-```env
-WALLET_PRIVATE_KEY=0xYourPrivateKeyHere
-BSC_RPC_URL=https://bsc-dataseed.binance.org
-MORALIS_API_KEY=YourMoralisApiKey
+### Re-configure:
+```bash
+bnbchain-mcp --init
 ```
 
 ---
 
-### 📘 MCP Protocol Compatibility
+## 🔑 Get Moralis API Key (For Wallet Balance)
 
-This CLI server follows the **Model Context Protocol (MCP)** standard, enabling it to:
+📎 [Moralis API Docs](https://docs.moralis.com/2.0/web3-data-api/evm/get-your-api-key)
 
-- Work with Claude Desktop
-- Be used in tool-calling agents (OpenAI, LangChain, etc.)
-- Support structured tool definitions with predictable inputs/outputs
-
----
-
-### 🛡️ Security Notes
-
-- Your private key is stored in `.env` – never share it
-- Use trusted RPC endpoints
-- Consider rotating your keys frequently if using hot wallets
+1. Visit: [https://moralis.io](https://moralis.io)
+2. Sign up → Dashboard → Web3 Data → API Keys
+3. Copy key and paste during CLI setup
 
 ---
 
-### 📄 License
+## 📘 Model Context Protocol (MCP)
 
-MIT License — Free for personal or commercial use.
+This project is built on **Model Context Protocol** – a standard to help agents and models interact with structured tool APIs.
 
+**MCP Benefits**:
+- ✅ Structured input/output
+- ✅ Claude + OpenAI compatible
+- ✅ Secure + serverless-ready
+
+---
+
+## ✅ Roadmap
+
+- [x] CLI Configuration Wizard
+- [x] Claude Desktop Integration
+- [x] Token Deploy + Transfer
+- [ ] Token charting tools (DEXTools, Gecko)
+- [ ] Telegram auto-trading agent
+- [ ] AI assistant with BSC on-chain brain
+
+---
+
+## 🤝 Contributing
+
+Feel free to fork, PR, or raise issues.
+We're building **tool-first, AI-ready infrastructure** for the next wave of Web3 agents. Join us!
+
+---
+
+## 🛡️ License
+
+MIT — Use freely, contribute openly.
+
+---

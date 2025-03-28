@@ -1,8 +1,11 @@
 {
   "name": "bnbchain-mcp",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "main": "index.js",
   "type": "module",
+  "bin": {
+    "bnbchain-mcp": "./build/index.js"
+  },
   "scripts": {
     "test": "node test/testServer.js",
     "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",

@@ -1,62 +1,57 @@
-import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import dotenv from "dotenv";
+#!/usr/bin/env node
+// src/index.ts
+import { parseArgs } from 'node:util';
+import { init } from './cli/init.js';
+import { version } from './cli/version.js';
+import { printHelp } from './cli/help.js';
+import { main } from './main.js';
 
-// Import tool registrations
-import { registerTransferNativeToken } from "./tools/transferNativeToken.js";
-import { registerTransferBEP20Token } from "./tools/transferBEP20Token.js";
-import { registerPancakeSwap } from "./tools/pancakeSwap.js";
-import { registerGetWalletInfo } from "./tools/getWalletInfo.js";
-import { JSONRPCMessage } from "@modelcontextprotocol/sdk/types.js";
-import { registerCreateMemeToken } from "./tools/createFourMeme.js";
-import { registerCreateBEP20Token } from "./tools/createBEP20Token.js";
-import { registerBuyMemeToken } from "./tools/buyMemeToken.js";
-import { registerSellMemeToken } from "./tools/sellMemeToken.js";
-import { registerPancakeAddLiquidity } from "./tools/pancakeAddLiquidity.js";
-import { registerPancakeMyPosition } from "./tools/pancakeMyPosition.js";
-import { registerGoplusSecurityCheck } from "./tools/goplusSecurityCheck.js";
-import { registerPancakeRemovePosition } from "./tools/pancakeRemovePosition.js";
 
-// Load environment variables
-dotenv.config();
-
-// Create MCP server instance
-const server = new McpServer({
-  name: "bsc-mcp",
-  version: "1.0.0",
+process.on('uncaughtException', (error: Error) => {
+  console.error('❌ Uncaught exception:', error);
 });
 
-// Register all tools
-registerTransferNativeToken(server);
-registerTransferBEP20Token(server);
-registerPancakeSwap(server);
-registerGetWalletInfo(server);
-registerCreateMemeToken(server);
-registerCreateBEP20Token(server);
-registerBuyMemeToken(server);
-registerSellMemeToken(server);
-registerPancakeAddLiquidity(server);
-registerPancakeMyPosition(server);
-registerPancakeRemovePosition(server);
-registerGoplusSecurityCheck(server);
+process.on('unhandledRejection', (error: Error | unknown) => {
+  console.error('❌ Unhandled rejection:', error);
+});
 
-// Start the server
-async function main() {
-  const transport = new StdioServerTransport();
-
-  // Add event listeners for incoming messages
-  transport.onmessage = (message: JSONRPCMessage) => {
-    console.log("Received message:", JSON.stringify(message, null, 2));
-  };
-
-  transport.onerror = (error: any) => {
-    console.error("Transport error:", error);
-  };
-
-  await server.connect(transport);
-  console.error("Weather MCP Server running on stdio");
+interface CliOptions {
+  init?: boolean;
+  help?: boolean;
+  version?: boolean;
 }
 
-main().catch((error) => {
+let values: CliOptions;
+
+try {
+  const args = parseArgs({
+    options: {
+      init: { type: 'boolean', short: 'i' },
+      help: { type: 'boolean', short: 'h' },
+      version: { type: 'boolean', short: 'v' },
+    },
+  });
+  values = args.values as CliOptions;
+} catch (err) {
+  console.error('❌ Unrecognized argument. For help, run `bnbchain-mcp --help`.');
   process.exit(1);
-});
+}
+
+if (values.help) {
+  printHelp();
+  process.exit(0);
+}
+
+if (values.version) {
+  console.log(version);
+  process.exit(0);
+}
+
+if (values.init) {
+  await init(); // run init.js logic
+} else {
+  main().catch((error: Error) => {
+    console.error('❌ Fatal error in main():', error);
+    process.exit(1);
+  });
+}
