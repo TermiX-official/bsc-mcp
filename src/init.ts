@@ -5,9 +5,14 @@ import ora from 'ora';
 import path from 'path';
 import fs from 'fs-extra';
 import os from 'os';
+import { fileURLToPath } from 'url';
 
 // Binance Gold Color
 const yellow = chalk.hex('#F0B90B');
+
+// ESModule __dirname workaround
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Cancel handler
 const onCancel = () => {
@@ -67,14 +72,13 @@ MORALIS_API_KEY=${moralis || ''}
 
 // Generate config object
 const generateConfig = async (privateKey: string, rpcUrl?: string, moralis?: string): Promise<any> => {
-    const projectRoot = process.cwd();
-    const buildPath = path.join(projectRoot, 'build', 'index.js');
+    const indexPath = path.resolve(__dirname, '..', 'build', 'index.js'); // one level up from cli/
 
     return {
         mcpServers: {
             'bsc-mcp': {
                 command: 'node',
-                args: [buildPath],
+                args: [indexPath],
                 env: {
                     BSC_WALLET_PRIVATE_KEY: privateKey,
                     BSC_RPC_URL: rpcUrl || '',
@@ -109,7 +113,7 @@ const saveFallbackConfig = async (config: object): Promise<void> => {
 };
 
 // Main logic
-const main = async () => {
+const init = async () => {
     showBanner();
 
     const { moralis, privateKey, rpcUrl } = await getInputs();
@@ -134,4 +138,4 @@ const main = async () => {
     }
 };
 
-main();
+init(); 
