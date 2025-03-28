@@ -1,25 +1,12 @@
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { bsc } from "viem/chains";
 import {
-  createWalletClient,
-  http,
-  parseEther,
   parseUnits,
-  getContract,
-  isAddress,
-  createPublicClient,
-  type Hash,
-  type Address,
-  type Hex,
-  publicActions,
-  getEventSelector,
-  AbiEvent,
   toEventSelector,
   decodeEventLog,
 } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
+import { account, client } from "../config.js";
 
 const createTokenABI = [
 	{
@@ -110,18 +97,6 @@ export function registerCreateBEP20Token(server: McpServer) {
         async ({ name, symbol, totalSupply }) => {
             
             try {
-                // Create account from private key
-                const account = privateKeyToAccount(
-                    process.env.BSC_WALLET_PRIVATE_KEY as Hex
-                );
-
-                const rpcUrl = process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org";
-                // Create wallet client
-                const client = createWalletClient({
-                    account,
-                    chain: bsc,
-                    transport: http(rpcUrl),
-                }).extend(publicActions);
                 
                 const contract = "0xad9e6346E87Dfb4c08a47CBDFDF715A700C03918";
                 const hash = await client.writeContract({

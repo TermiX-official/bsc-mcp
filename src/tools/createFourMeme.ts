@@ -1,17 +1,12 @@
 //@ts-nocheck
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { bsc } from "viem/chains";
 import {
-  createWalletClient,
-  http,
   parseEther,
   type Hex,
-  publicActions,
-  PrivateKeyAccount,
   decodeEventLog,
 } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
+import { client, account } from "../config.js";
 
 export const CreateFourMemeSchema = z.object({
   name: z.string().describe("name"),
@@ -29,9 +24,7 @@ const fourMemeToken = {
   time: 0,
 };
 
-export const loginFourMeme = async (
-  account: PrivateKeyAccount
-): Promise<string> => {
+export const loginFourMeme = async (): Promise<string> => {
   if (Date.now() - fourMemeToken.time < 1000 * 60 * 10) {
     return fourMemeToken.token;
   }
@@ -191,24 +184,11 @@ export function registerCreateMemeToken(server: McpServer) {
           if (webUrl !== '') {
               args.webUrl = webUrl;
           }
-        // Create account from private key
-        const account = privateKeyToAccount(
-          process.env.BSC_WALLET_PRIVATE_KEY as Hex
-        );
-
-        const rpcUrl = process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org";
-
-        const walletClient = createWalletClient({
-          chain: bsc,
-          transport: http(rpcUrl),
-          account: account,
-        }).extend(publicActions);
-
         const loginToken = await loginFourMeme(account);
         const transactionData = await createMemeTokenData(args, loginToken);
 
         const contract = "0x5c952063c7fc8610FFDB798152D69F0B9550762b";
-        const hash = await walletClient.writeContract({
+        const hash = await client.writeContract({
           account,
           address: contract,
           abi: [
@@ -239,7 +219,7 @@ export function registerCreateMemeToken(server: McpServer) {
           value: transactionData.value,
         });
 
-        const transaction = await walletClient.waitForTransactionReceipt({
+        const transaction = await client.waitForTransactionReceipt({
           hash: hash,
           retryCount: 300,
           retryDelay: 1000,

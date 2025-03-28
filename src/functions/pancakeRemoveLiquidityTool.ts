@@ -1,8 +1,17 @@
-import { ChainId, Native, NativeCurrency, Percent } from "@pancakeswap/sdk";
+import { ChainId, Native, Percent } from "@pancakeswap/sdk";
 import { PositionMath, Multicall } from "@pancakeswap/v3-sdk";
-import { Address, Hex, PublicActions, WalletClient, encodeFunctionData, getAddress, zeroAddress, maxUint128, parseAbi, http, createWalletClient, publicActions } from "viem";
+import { 
+    Address, 
+    Hex, 
+    encodeFunctionData, 
+    getAddress, 
+    zeroAddress, 
+    maxUint128, 
+    parseAbi, 
+} from "viem";
 
 import dotenv from 'dotenv';
+import { account, client } from "../config.js";
 dotenv.config();
 
 
@@ -133,8 +142,7 @@ const Payments_ABI = [
 const POSITION_MANAGER_ADDRESS = '0x46A15B0b27311cedF172AB29E4f4766fbE7F4364' as Address;
 const FACTORY_ADDRESS = '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865' as Address;
 
-export const removeLiquidityV3 = async (
-    client: WalletClient & PublicActions, tokenId: BigInt, percent: number) => {
+export const removeLiquidityV3 = async (tokenId: BigInt, percent: number) => {
 
     const calldatas: Hex[] = []
 
@@ -176,7 +184,7 @@ export const removeLiquidityV3 = async (
         args: [
             {
                 tokenId,
-                recipient: involvesETH ? zeroAddress : client.account?.address,
+                recipient: involvesETH ? zeroAddress : account.address,
                 amount0Max: maxUint128,
                 amount1Max: maxUint128,
             },
@@ -235,12 +243,12 @@ export const removeLiquidityV3 = async (
         calldatas.push(encodeFunctionData({
             abi: Payments_ABI,
             functionName: 'unwrapWETH9',
-            args: [ethAmount, client.account?.address],
+            args: [ethAmount, account.address],
         }))
         calldatas.push(encodeFunctionData({
             abi: Payments_ABI,
             functionName: 'sweepToken',
-            args: [token, tokenAmount, client.account?.address],
+            args: [token, tokenAmount, account.address],
         }))
     }
 
@@ -250,7 +258,7 @@ export const removeLiquidityV3 = async (
         to: POSITION_MANAGER_ADDRESS,
         data: data,
         value: BigInt(0),
-        account: client.account as any,
+        account: account,
         chain: client.chain as any,
     })
     return tx

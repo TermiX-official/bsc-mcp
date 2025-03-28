@@ -1,8 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { createWalletClient, http, parseEther } from "viem";
-import { bsc } from "viem/chains";
-import { privateKeyToAccount } from "viem/accounts";
+import { parseEther } from "viem";
+import { client } from "../config.js";
 
 export function registerTransferNativeToken(server: McpServer) {
   server.tool(
@@ -14,16 +13,6 @@ export function registerTransferNativeToken(server: McpServer) {
     },
     async ({ recipientAddress, amount }) => {
       try {
-        const account = privateKeyToAccount(
-          process.env.BSC_WALLET_PRIVATE_KEY as `0x${string}`
-        );
-
-        const rpcUrl = process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org";
-        const client = createWalletClient({
-          account,
-          chain: bsc,
-          transport: http(rpcUrl),
-        });
 
         const hash = await client.sendTransaction({
           to: recipientAddress as `0x${string}`,

@@ -8,14 +8,11 @@ import {
   parseUnits,
   isAddress,
 } from "viem";
-import { resolveCurrency } from "../util.js";
-import { privateKeyToAccount } from "viem/accounts";
 import { bsc } from "viem/chains";
 import { erc20Abi, hexToBigInt, maxUint256 } from "viem";
 import {
   ChainId,
   CurrencyAmount,
-  ERC20Token,
   Native,
   Percent,
   Token,
@@ -28,7 +25,7 @@ import {
   SwapRouter,
 } from "@pancakeswap/smart-router";
 import { GraphQLClient } from "graphql-request";
-import { type } from "os";
+import { account } from "../config.js";
 
 
 export const getToken = async (
@@ -87,9 +84,6 @@ export const pancakeSwap = async ({
 }): Promise<Hash> => {
 
   const chainId = 56
-  const account = privateKeyToAccount(
-    process.env.BSC_WALLET_PRIVATE_KEY as `0x${string}`
-  );
 
   const rpcUrl = process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org";
   const publicClient = createPublicClient({

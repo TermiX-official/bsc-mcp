@@ -1,7 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { getBalance } from "../functions/fetchBalanceTool.js";
-import { privateKeyToAccount } from "viem/accounts";
+import { account } from "../config.js";
 
 export function registerGetWalletInfo(server: McpServer) {
   server.tool(
@@ -13,9 +13,6 @@ export function registerGetWalletInfo(server: McpServer) {
     async ({ address }) => {
       try {
         if (address === '' || !address) {
-          const account = privateKeyToAccount(
-                    process.env.BSC_WALLET_PRIVATE_KEY as `0x${string}`
-                  );
           address = account.address
         }
         const balance = await getBalance(address);
