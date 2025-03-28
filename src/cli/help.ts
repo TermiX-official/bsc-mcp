@@ -1,7 +1,7 @@
 // src/cli/help.ts
 export function printHelp(): void {
     console.log(`
-  📦 BSC MCP CLI
+  📦 BNB Chain MCP CLI
   
   Usage:
     bnbchain-mcp [options]

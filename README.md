@@ -2,11 +2,11 @@
 
 https://github.com/user-attachments/assets/b3ed768a-6fd9-4b09-bcdd-dd122965f46e
 
-# BSC MCP Server
+# BNB Chain MCP Server
 
 ## Overview
 
-BSC MCP Server is a backend service designed to execute transactions on the Binance Smart Chain (BSC). It facilitates seamless interaction with the blockchain, including sending native BNB and BEP-20 token transfers. The server utilizes the Model Context Protocol (MCP) framework to ensure secure, structured, and efficient transactions.
+BNB Chain MCP Server is a backend service designed to execute transactions on the Binance Smart Chain (BSC). It facilitates seamless interaction with the blockchain, including sending native BNB and BEP-20 token transfers. The server utilizes the Model Context Protocol (MCP) framework to ensure secure, structured, and efficient transactions.
 
 ### Key Functionalities:
 
@@ -30,7 +30,7 @@ BSC MCP Server is a backend service designed to execute transactions on the Bina
 
 ## Requirements
 
-Before setting up the BSC MCP Server, ensure you have the following installed:
+Before setting up the BNB Chain MCP Server, ensure you have the following installed:
 
 - Node.js (v16 or later)
 - npm or yarn
