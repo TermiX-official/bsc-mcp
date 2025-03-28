@@ -2,9 +2,12 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { Address, Hex, PublicActions, WalletClient, createWalletClient, formatUnits, http, parseAbi, parseEther, parseUnits, publicActions } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import { bsc } from "viem/chains";
+import { 
+    Address, 
+    formatUnits, 
+    parseAbi, 
+} from "viem";
+import { account, client } from '../config.js';
 
 
 const POSITION_MANAGER_ADDRESS = '0x46A15B0b27311cedF172AB29E4f4766fbE7F4364' as Address;
@@ -31,14 +34,8 @@ const masterChefV3ABI = parseAbi([
     'function positions(uint256) external view returns (uint96 nonce, address operator, address token0, address token1, uint24 fee, int24 tickLower, int24 tickUpper, uint128 liquidity, uint256 feeGrowthInside0LastX128, uint256 feeGrowthInside1LastX128, uint128 tokensOwed0, uint128 tokensOwed1)',
 ]);
 
-export const myPosition = async (
-    client: WalletClient & PublicActions,
-) => {
+export const myPosition = async () => {
 
-    const account = client.account
-    if (!account) {
-        throw new Error('Wallet not connected');
-    }
 
     const balance = await client.readContract({
         abi: masterChefV3ABI,

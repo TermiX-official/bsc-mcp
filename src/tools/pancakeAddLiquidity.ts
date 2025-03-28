@@ -1,22 +1,17 @@
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { bsc } from "viem/chains";
 import {
-    createWalletClient,
-    http,
     parseUnits,
-    type Hex,
-    publicActions,
     Address,
 } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
 import { addLiquidityV3 } from "../functions/pancakeAddLiquidityTool.js";
 import { CurrencyAmount, } from "@pancakeswap/sdk";
 import {
     FeeAmount
 } from '@pancakeswap/v3-sdk';
 import { getToken } from "../functions/pancakeSwapTool.js";
+import { account } from "../config.js";
 
 export function registerPancakeAddLiquidity(server: McpServer) {
 
@@ -32,15 +27,6 @@ export function registerPancakeAddLiquidity(server: McpServer) {
         async ({ token0, token1, token0Amount, token1Amount }) => {
 
             try {
-                const account = privateKeyToAccount(
-                  process.env.BSC_WALLET_PRIVATE_KEY as `0x${string}`
-                );
-                const rpcUrl = process.env.BSC_RPC_URL as string || "";
-                const client = createWalletClient({
-                    account: account,
-                    chain: bsc,
-                    transport: http(rpcUrl)
-                }).extend(publicActions);
             
                 // Define tokens
                 const tokenA = await getToken(token0);
@@ -51,13 +37,12 @@ export function registerPancakeAddLiquidity(server: McpServer) {
                 const amountTokenB = CurrencyAmount.fromRawAmount(tokenB, parseUnits(token1Amount, tokenB.decimals).toString());
             
                 const hash = await addLiquidityV3(
-                    client,
                     tokenA,
                     tokenB,
                     FeeAmount.MEDIUM, // 0.3%
                     amountTokenA,
                     amountTokenB,
-                    client.account?.address as Address
+                    account.address as Address
                 );
 
                 return {

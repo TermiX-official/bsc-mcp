@@ -1,9 +1,9 @@
-import { Abi, AbiFunction, isAddress, PublicActions, WalletClient } from "viem";
+import { Abi, AbiFunction, isAddress, } from "viem";
+import { account, client } from "../config.js";
 
 /**
  * Call a contract's function with a given wallet and arguments.
  *
- * @param wallet - The wallet client instance.
  * @param args - The arguments for the contract call.
  * @param args.abi - The contract ABI as a JSON string.
  * @param args.contractAddress - The contract address.
@@ -13,7 +13,6 @@ import { Abi, AbiFunction, isAddress, PublicActions, WalletClient } from "viem";
  * @returns The result of the contract call or transaction hash.
  */
 export async function callContractHandler(
-  wallet: WalletClient & PublicActions,
   args: {
     abi: string;
     contractAddress: string;
@@ -52,7 +51,7 @@ export async function callContractHandler(
     functionAbi.stateMutability === "view" ||
     functionAbi.stateMutability === "pure"
   ) {
-    const tx = await wallet.readContract({
+    const tx = await client.readContract({
       address: args.contractAddress,
       abi,
       functionName: args.functionName,
@@ -61,8 +60,8 @@ export async function callContractHandler(
     return String(tx);
   }
 
-  const tx = await wallet.simulateContract({
-    account: wallet.account,
+  const tx = await client.simulateContract({
+    account: account,
     abi,
     address: args.contractAddress,
     functionName: args.functionName,
@@ -70,7 +69,7 @@ export async function callContractHandler(
     args: functionArgs,
   });
 
-  const txHash = await wallet.writeContract(tx.request);
+  const txHash = await client.writeContract(tx.request);
 
   return txHash;
 }

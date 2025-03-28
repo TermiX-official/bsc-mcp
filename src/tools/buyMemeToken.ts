@@ -1,16 +1,11 @@
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { bsc } from "viem/chains";
 import {
-    createWalletClient,
-    http,
-    parseEther,
     parseUnits,
     type Hex,
-    publicActions,
 } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
+import { account, client } from "../config.js";
 
 
 export function registerBuyMemeToken(server: McpServer) {
@@ -26,18 +21,7 @@ export function registerBuyMemeToken(server: McpServer) {
         async ({ token, tokenValue, bnbValue }) => {
 
             try {
-                // Create account from private key
-                const account = privateKeyToAccount(
-                    process.env.BSC_WALLET_PRIVATE_KEY as Hex
-                );
-
-                const rpcUrl = process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org";
-                // Create wallet client
-                const client = createWalletClient({
-                    account,
-                    chain: bsc,
-                    transport: http(rpcUrl),
-                }).extend(publicActions);
+                
 
                 const [,,estimatedAmount,,,amountMsgValue,,] = await client.readContract({
                         address: '0xF251F83e40a78868FcfA3FA4599Dad6494E46034',

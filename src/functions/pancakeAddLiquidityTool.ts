@@ -1,8 +1,6 @@
 import {
     parseAbi,
     type Address,
-    PublicActions,
-    WalletClient,
     Hex,
 } from 'viem';
 import {
@@ -14,6 +12,7 @@ import {
 import { Currency, CurrencyAmount, Percent, Token } from '@pancakeswap/sdk';
 
 import dotenv from 'dotenv';
+import { account, client } from '../config.js';
 dotenv.config();
 
 // PancakeSwap V3 contract addresses (BSC)
@@ -41,18 +40,14 @@ const POSITION_MANAGER_ABI = [
 ];
 
 async function approveTokensIfNeeded(
-    client: WalletClient & PublicActions,
     token: Currency,
     spender: Address,
     amount: string,
 ): Promise<void> {
-    if (!client.account) {
-        throw new Error('Wallet not connected');
-    }
 
     if (!token.isNative) {
         const tokenAddress = token.address as Address;
-        const accountAddress = client.account.address;
+        const accountAddress = account.address;
 
         const allowance = await client.readContract({
             address: tokenAddress,
@@ -64,7 +59,7 @@ async function approveTokensIfNeeded(
         if (BigInt(allowance.toString()) < BigInt(amount)) {
             const hash = await client.writeContract({
                 chain: client.chain,
-                account: client.account,
+                account: account,
                 address: tokenAddress,
                 abi: ERC20_ABI,
                 functionName: 'approve',
@@ -93,14 +88,10 @@ function sortTokens(
 }
 
 async function checkBalance(
-    client: WalletClient & PublicActions,
     token: Currency,
     amount: CurrencyAmount<Currency>
 ) {
-    if (!client.account) {
-        throw new Error('Wallet not connected');
-    }
-    const accountAddress = client.account.address;
+    const accountAddress = account.address;
     if (token.isNative) {
         const balance = await client.getBalance({ address: accountAddress });
         const balanceAmount = CurrencyAmount.fromRawAmount(token, balance.toString());
@@ -123,7 +114,6 @@ async function checkBalance(
 
 /**
  * Add V3 liquidity
- * @param client viem client
  * @param tokenA first token
  * @param tokenB second token
  * @param fee fee tier
@@ -138,7 +128,6 @@ async function checkBalance(
  */
 
 export async function addLiquidityV3(
-    client: WalletClient & PublicActions,
     tokenA: Currency,
     tokenB: Currency,
     fee: FeeAmount,
@@ -150,17 +139,15 @@ export async function addLiquidityV3(
     priceLower: number = 0.8,
     priceUpper: number = 1.2
 ): Promise<Hex> {
-    if (!client.account) {
-        throw new Error('Wallet not connected');
-    }
+    
 
     await Promise.all([
-        approveTokensIfNeeded(client, tokenA, POSITION_MANAGER_ADDRESS, amountA.quotient.toString()),
-        approveTokensIfNeeded(client, tokenB, POSITION_MANAGER_ADDRESS, amountB.quotient.toString()),
+        approveTokensIfNeeded(tokenA, POSITION_MANAGER_ADDRESS, amountA.quotient.toString()),
+        approveTokensIfNeeded(tokenB, POSITION_MANAGER_ADDRESS, amountB.quotient.toString()),
     ]);
 
-    await checkBalance(client, tokenA, amountA)
-    await checkBalance(client, tokenB, amountB)
+    await checkBalance(tokenA, amountA)
+    await checkBalance(tokenB, amountB)
 
     const [token0, token1, amount0, amount1] = sortTokens(tokenA, tokenB, amountA, amountB);
 
@@ -248,7 +235,7 @@ export async function addLiquidityV3(
         functionName: 'mint',
         args: [mintParams],
         value: BigInt(value),
-        account: client.account
+        account: account
     });
     return hash;
 }

@@ -1,13 +1,6 @@
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { bsc } from "viem/chains";
-import {
-    createWalletClient,
-    http,
-    publicActions,
-} from "viem";
-import { privateKeyToAccount } from "viem/accounts";
 import { removeLiquidityV3 } from "../functions/pancakeRemoveLiquidityTool.js";
 
 export function registerPancakeRemovePosition(server: McpServer) {
@@ -22,17 +15,8 @@ export function registerPancakeRemovePosition(server: McpServer) {
         async ({ positionId, percent }) => {
 
             try {
-                const account = privateKeyToAccount(
-                    process.env.BSC_WALLET_PRIVATE_KEY as `0x${string}`
-                );
-                const rpcUrl = process.env.BSC_RPC_URL as string || "";
-                const client = createWalletClient({
-                    account: account,
-                    chain: bsc,
-                    transport: http(rpcUrl)
-                }).extend(publicActions);
 
-                const hash = await removeLiquidityV3(client, BigInt(positionId), percent);
+                const hash = await removeLiquidityV3(BigInt(positionId), percent);
                 return {
                     content: [
                         {

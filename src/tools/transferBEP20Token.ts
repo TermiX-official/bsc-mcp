@@ -1,10 +1,9 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { createWalletClient, http, parseUnits, getContract } from "viem";
-import { bsc } from "viem/chains";
-import { privateKeyToAccount } from "viem/accounts";
+import { parseUnits, getContract } from "viem";
 import { getEVMTokenAddress } from "../functions/getEvmTokenAddress.js";
 import { bep20abi } from "../lib/bep20Abi.js";
+import { client } from "../config.js";
 
 export function registerTransferBEP20Token(server: McpServer) {
   server.tool(
@@ -25,15 +24,6 @@ export function registerTransferBEP20Token(server: McpServer) {
           rpcUrl
         );
 
-        const account = privateKeyToAccount(
-          process.env.BSC_WALLET_PRIVATE_KEY as `0x${string}`
-        );
-
-        const client = createWalletClient({
-          account,
-          chain: bsc,
-          transport: http(rpcUrl),
-        });
 
         const contract = getContract({
           address: tokenInfo.address,
