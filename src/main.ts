@@ -52,6 +52,4 @@ export async function main() {
     };
 
     await server.connect(transport);
-
-    console.log("✅ BNB Chain MCP Server is now running via stdio.");
 }

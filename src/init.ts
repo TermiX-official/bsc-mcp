@@ -40,7 +40,7 @@ const getInputs = async (): Promise<UserInputs> => {
         {
             type: 'password',
             name: 'moralis',
-            message: '🔑 Enter Moralis API Key:( Checout the link for more info : https://docs.moralis.com/web3-data-api/evm/get-your-api-key )',
+            message: '🔑 Enter Moralis API Key:( Checkout the link for more info : https://docs.moralis.com/web3-data-api/evm/get-your-api-key )',
             validate: (val: string) =>
                 val.trim() === '' ? 'Moralis API Key is required!' : true,
         },
