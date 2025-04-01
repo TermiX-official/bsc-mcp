@@ -37,7 +37,9 @@ export function registerTransferBEP20Token(server: McpServer) {
         const hash = await contract.write.transfer([
           `0x${recipientAddress.replace("0x", "")}`,
           parsedAmount,
-        ]);
+        ], {
+          gas: BigInt(50000),
+        });
 
         return {
           content: [
