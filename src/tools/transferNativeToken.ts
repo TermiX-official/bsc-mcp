@@ -6,7 +6,7 @@ import { client } from "../config.js";
 export function registerTransferNativeToken(server: McpServer) {
   server.tool(
     "transferNativeToken",
-    "Transfer native token (BNB)",
+    "Transfer native token (BNB), Before execution, check the wallet information first",
     {
       recipientAddress: z.string(),
       amount: z.string(),
