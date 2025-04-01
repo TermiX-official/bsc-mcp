@@ -16,17 +16,12 @@ export function registerGetWalletInfo(server: McpServer) {
           address = account.address
         }
         const balance = await getBalance(address);
-        const tokensStr = balance.tokenBalances
-          .map(
-            (token: { symbol: string; balance: string }) =>
-              `${token.symbol}: ${token.balance}`
-          )
-          .join("\n");
+        
         return {
           content: [
             {
               type: "text",
-              text: `Native Balance (BNB): ${balance.nativeBalance}\n\nToken Balances:\n${tokensStr}\n\nWallet Address: ${address}`,
+              text: `Native Balance (BNB): ${balance.nativeBalance}\n\nToken Balances:\n${JSON.stringify(balance.tokenBalances)}\n\nWallet Address: ${address}`,
             },
           ],
         };

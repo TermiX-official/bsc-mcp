@@ -1,6 +1,6 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { parseUnits, getContract } from "viem";
+import { parseUnits, getContract, Address } from "viem";
 import { getEVMTokenAddress } from "../functions/getEvmTokenAddress.js";
 import { bep20abi } from "../lib/bep20Abi.js";
 import { client } from "../config.js";
@@ -8,37 +8,31 @@ import { client } from "../config.js";
 export function registerTransferBEP20Token(server: McpServer) {
   server.tool(
     "transferBEP20Token",
-    "Transfer BEP-20 token by symbol or address",
+    "Transfer BEP-20 token by symbol or address,Before execution, check the wallet information first",
     {
       recipientAddress: z.string(),
       amount: z.string(),
-      token: z.string(),
+      address: z.string(),
     },
-    async ({ recipientAddress, amount, token }) => {
+    async ({ recipientAddress, amount, address }) => {
       try {
         // Get token details including address and decimals
-        const rpcUrl = process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org";
-        const tokenInfo = await getEVMTokenAddress(
-          56,
-          token,
-          rpcUrl
-        );
-
 
         const contract = getContract({
-          address: tokenInfo.address,
+          address: address as Address,
           abi: bep20abi,
           client,
         });
 
+        const decimals = await contract.read.decimals();
         // Parse the amount based on token decimals
-        const parsedAmount = parseUnits(amount, tokenInfo.decimals);
+        const parsedAmount = parseUnits(amount, decimals);
 
         const hash = await contract.write.transfer([
           `0x${recipientAddress.replace("0x", "")}`,
           parsedAmount,
         ], {
-          gas: BigInt(50000),
+          gas: BigInt(100000),
         });
 
         return {
