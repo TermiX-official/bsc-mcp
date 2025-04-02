@@ -131,16 +131,19 @@ export function showInputBoxWithTerms(): Promise<InputResult> {
         // For macOS, we use AppleScript to show a dialog with both input and checkbox
         // The AppleScript is more complex but allows for a better UX
         const appleScript = `
-        tell application "System Events"
+tell application "System Events"
     repeat
-        set userInput to display dialog "Enter your Wallet Password (must be exactly 6 characters):" default answer "" with hidden answer buttons {"cancel", "confirm"} default button "confirm" with icon note
-        set userPassword to text returned of userInput
-        if length of userPassword is 6 then exit repeat
-        display dialog "Password must be exactly 6 characters." buttons {"confirm"} default button "confirm" with icon caution
+        try
+            set userInput to display dialog "Enter your Wallet Password (must be exactly 6 characters):" default answer "" with hidden answer buttons {"cancel", "confirm"} default button "confirm" with icon note
+            set userPassword to text returned of userInput
+            if length of userPassword is 6 then exit repeat
+            display dialog "Password must be exactly 6 characters." buttons {"confirm"} default button "confirm" with icon caution
+        on error
+            return "null============false" -- 用户取消，直接返回，不再执行后续对话框
+        end try
     end repeat
 
     set agreeToTerms to button returned of (display dialog "No password required within 1 hour." buttons {"no", "yes"} default button "no" with icon caution)
-
     return userPassword & "============" & agreeToTerms
 end tell
         `;
