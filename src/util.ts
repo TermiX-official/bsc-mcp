@@ -127,42 +127,22 @@ export function showInputBoxWithTerms(): Promise<InputResult> {
   return new Promise((resolve, reject) => {
 
     switch (platform) {
-      case 'linux':
-        // For Linux, we use zenity with two separate dialogs
-        // First show the input box
-        exec(`zenity --entry --title="${title}" --text="${message}" `, (error, stdout, stderr) => {
-          if (error) {
-            // User cancelled
-            if (error.code === 1 || error.code === 255) {
-              resolve({ value: null, agreed: false });
-            } else {
-              reject(error);
-            }
-            return;
-          }
-
-          const inputValue = stdout.trim();
-
-          // Then show the checkbox
-          exec(`zenity --question --title="${title}" --text="${termsText}" --ok-label="同意" --cancel-label="不同意"`, (error2, stdout2, stderr2) => {
-            // Exit code 0 means agreed, exit code 1 means not agreed
-            resolve({
-              value: inputValue,
-              agreed: error2 ? false : true
-            });
-          });
-        });
-        break;
-
       case 'darwin':
         // For macOS, we use AppleScript to show a dialog with both input and checkbox
         // The AppleScript is more complex but allows for a better UX
         const appleScript = `
-          set theResponse to display dialog "${message}" with title "${title}" with icon note buttons {"cancel", "confirm"} default button "confirm"
-          set theText to text returned of theResponse
-          set agreedToTerms to display dialog "${termsText}" buttons {"不同意", "同意"} default button "同意" with title "${title}"
-          set buttonPressed to button returned of agreedToTerms
-          return theText & "||" & buttonPressed
+        tell application "System Events"
+    repeat
+        set userInput to display dialog "Enter your Wallet Password (must be exactly 6 characters):" default answer "" with hidden answer buttons {"cancel", "confirm"} default button "confirm" with icon note
+        set userPassword to text returned of userInput
+        if length of userPassword is 6 then exit repeat
+        display dialog "Password must be exactly 6 characters." buttons {"confirm"} default button "confirm" with icon caution
+    end repeat
+
+    set agreeToTerms to button returned of (display dialog "No password required within 1 hour." buttons {"no", "yes"} default button "no" with icon caution)
+
+    return userPassword & "============" & agreeToTerms
+end tell
         `;
 
         exec(`osascript -e '${appleScript}'`, (error, stdout, stderr) => {
@@ -176,13 +156,16 @@ export function showInputBoxWithTerms(): Promise<InputResult> {
             return;
           }
 
-          const parts = stdout.trim().split('||');
+          console.log(stdout)
+          const [password, agree] = stdout.trim().split("============");
           resolve({
-            value: parts[0],
-            agreed: parts.length > 1 && parts[1] === '同意'
+            value: password,
+            agreed: agree === "yes"
           });
         });
         break;
+
+
 
 
       case 'win32':
