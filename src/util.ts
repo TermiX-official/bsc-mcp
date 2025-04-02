@@ -132,7 +132,7 @@ export async function getPassword(isRetry?: boolean): Promise<InputResult> {
   
   const passwordEncrypt = hashPassword(password)
   if (passwordEncrypt != curPassword) {
-    await getPassword(true);
+    return await getPassword(true);
   }
   return passwordResp;
 }
