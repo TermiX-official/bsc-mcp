@@ -20,3 +20,7 @@ export function decrypt(encrypted: string, secretKey: string): string {
     decrypted += decipher.final('utf8');
     return decrypted;
 }
+
+export function hashPassword(password: string): string {
+    return crypto.createHash("sha256").update(password).digest("hex");
+}

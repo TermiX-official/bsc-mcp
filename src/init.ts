@@ -5,7 +5,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import os from 'os';
 import { fileURLToPath } from 'url';
-import { encrypt } from './PrivateAES.js';
+import { encrypt, hashPassword } from './PrivateAES.js';
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -76,10 +76,11 @@ const getInputs = async (): Promise<UserInputs> => {
 };
 
 // Generate .env file
-const generateEnvFile = async (privateKey: string, rpcUrl?: string, moralis?: string): Promise<void> => {
+const generateEnvFile = async (privateKey: string, walletPasswordEncrypt: string, rpcUrl?: string, moralis?: string): Promise<void> => {
     const envContent = `BSC_WALLET_PRIVATE_KEY=${privateKey}
 BSC_RPC_URL=${rpcUrl || ''}
 MORALIS_API_KEY=${moralis || ''}
+WALLET_PASSWORD=${walletPasswordEncrypt || ''}
 `.trim();
 
     await fs.writeFile('.env', envContent);
@@ -87,7 +88,7 @@ MORALIS_API_KEY=${moralis || ''}
 };
 
 // Generate config object
-const generateConfig = async (privateKey: string, rpcUrl?: string, moralis?: string): Promise<any> => {
+const generateConfig = async (privateKey: string, walletPasswordEncrypt: string, rpcUrl?: string, moralis?: string): Promise<any> => {
     const indexPath = path.resolve(__dirname, '..', 'build', 'index.js'); // one level up from cli/
 
     return {
@@ -97,6 +98,7 @@ const generateConfig = async (privateKey: string, rpcUrl?: string, moralis?: str
             env: {
                 BSC_WALLET_PRIVATE_KEY: privateKey,
                 BSC_RPC_URL: rpcUrl || '',
+                WALLET_PASSWORD: walletPasswordEncrypt || '',
                 MORALIS_API_KEY: moralis || ''
             },
             disabled: false,
@@ -151,10 +153,11 @@ const init = async () => {
     const { moralis, privateKey, rpcUrl, walletPassword } = await getInputs();
 
     const privateKeyEncrypt = encrypt(privateKey, walletPassword);
+    const walletPasswordEncrypt = hashPassword(walletPassword)
 
-    await generateEnvFile(privateKeyEncrypt, rpcUrl, moralis);
+    await generateEnvFile(privateKeyEncrypt, walletPasswordEncrypt, rpcUrl, moralis);
 
-    const config = await generateConfig(privateKeyEncrypt, rpcUrl, moralis);
+    const config = await generateConfig(privateKeyEncrypt, walletPasswordEncrypt, rpcUrl, moralis);
 
     const { setupClaude } = await prompts({
         type: 'confirm',

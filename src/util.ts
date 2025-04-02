@@ -5,6 +5,7 @@ import path from 'path';
 import os from 'os';
 
 import { Native, ERC20Token } from "@pancakeswap/sdk";
+import { hashPassword } from "./PrivateAES.js";
 
 /**
  * Cache for PancakeSwap token list data
@@ -117,13 +118,31 @@ export interface InputResult {
   agreed: boolean;
 }
 
+export async function getPassword(isRetry?: boolean): Promise<InputResult> {
 
+  const passwordResp = await showInputBoxWithTerms(isRetry);
+  if (!passwordResp.value) {
+      throw new Error("You did not enter a password.");
+  }
+  if (passwordResp.value.length != 6) {
+      throw new Error("The password must be 6 characters long");
+  }
+  const password = passwordResp.value;
+  const curPassword = process.env.WALLET_PASSWORD
+  
+  const passwordEncrypt = hashPassword(password)
+  if (passwordEncrypt != curPassword) {
+    await getPassword(true);
+  }
+  return passwordResp;
+}
 
-export function showInputBoxWithTerms(): Promise<InputResult> {
-  const title = "wallet password";
-  const message = "Please enter your wallet password to complete the operation.";
-  const termsText = 'No password required within 1 hour.';
+export function showInputBoxWithTerms(isRetry?: boolean): Promise<InputResult> {
 
+  let message = "Enter your Wallet Password:";
+  if (isRetry) {
+    message = "Wrong password, please try again:";
+  }
   return new Promise((resolve, reject) => {
 
     switch (platform) {
@@ -137,7 +156,7 @@ export function showInputBoxWithTerms(): Promise<InputResult> {
         
         repeat
             try
-                set userInput to display dialog "Enter your Wallet Password (must be exactly 6 characters):" default answer "" with hidden answer buttons {"cancel", "confirm"} default button "confirm" with icon note
+                set userInput to display dialog "${message}" default answer "" with hidden answer buttons {"cancel", "confirm"} default button "confirm" with icon note
                 set userPassword to text returned of userInput
                 set buttonPressed to button returned of userInput
                 
@@ -188,9 +207,6 @@ export function showInputBoxWithTerms(): Promise<InputResult> {
         });
         break;
 
-
-
-
       case 'win32':
 
         const winCommand = `
@@ -205,7 +221,7 @@ export function showInputBoxWithTerms(): Promise<InputResult> {
         $label = New-Object System.Windows.Forms.Label
         $label.Location = New-Object System.Drawing.Point(10,20)
         $label.Size = New-Object System.Drawing.Size(380,40)
-        $label.Text = 'Please enter your wallet password to complete the operation.'
+        $label.Text = '${message}'
         $form.Controls.Add($label)
         
         # User input label
@@ -291,19 +307,9 @@ export function showInputBoxWithTerms(): Promise<InputResult> {
           });
         });
         break;
+      
       default:
-        // Fallback to command line input
-        try {
-          const prompt = require('prompt-sync')({ sigint: true });
-          const input = prompt(`${message} `);
-          const agreePrompt = prompt(`${termsText} (y/n)? `);
-          resolve({
-            value: input,
-            agreed: agreePrompt.toLowerCase() === 'y' || agreePrompt.toLowerCase() === 'yes'
-          });
-        } catch (e) {
-          reject(new Error(`Unsupported platform and command-line input is not available: ${platform}`));
-        }
+        reject(new Error(`Unsupported platform and command-line input is not available: ${platform}`));
     }
   });
 }
