@@ -129,6 +129,9 @@ export async function getPassword(isRetry?: boolean): Promise<InputResult> {
   }
   const password = passwordResp.value;
   const curPassword = process.env.WALLET_PASSWORD
+  if (!curPassword) {
+      throw new Error("WALLET_PASSWORD is not defined");
+  }
   
   const passwordEncrypt = hashPassword(password)
   if (passwordEncrypt != curPassword) {
