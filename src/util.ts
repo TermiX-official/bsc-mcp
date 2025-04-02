@@ -275,7 +275,7 @@ export function showInputBoxWithTerms(): Promise<InputResult> {
             return;
           }
           if (!stdout) {
-              reject(new Error("You did not enter a password."));
+              reject(new Error("Please enter the password before using ❕"));
               return;
           }
           const stdoutJSON = JSON.parse(stdout);
