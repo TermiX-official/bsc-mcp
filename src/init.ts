@@ -61,14 +61,14 @@ const getInputs = async (): Promise<UserInputs> => {
         {
             type: 'password',
             name: 'privateKey',
-            message: '🔑 Enter your BSC Wallet Private Key:',
+            message: '🔑 Enter your BNB Chain Wallet Private Key:',
             validate: (val: string) =>
                 val.trim() === '' ? 'Private key is required!' : true,
         },
         {
             type: 'text',
             name: 'rpcUrl',
-            message: '🌐 Enter your BSC RPC URL (optional):',
+            message: '🌐 Enter your BNB Chain RPC URL (optional):',
         },
     ];
 
