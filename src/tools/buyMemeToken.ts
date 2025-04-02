@@ -5,15 +5,12 @@ import {
     parseUnits,
     type Hex,
 } from "viem";
-import { account, client } from "../config.js";
+import { getAccount, publicClient, walletClient } from "../config.js";
 
 
 export function registerBuyMemeToken(server: McpServer) {
 
-    server.tool(
-        "buyMemeToken",
-        "buy meme token",
-        {
+    server.tool("Buy_Meme_Token", "🚀Purchase meme tokens on BNBChain", {
             token: z.string(),
             tokenValue: z.string().default("0"),
             bnbValue: z.string().default("0"),
@@ -23,7 +20,9 @@ export function registerBuyMemeToken(server: McpServer) {
             try {
                 
 
-                const [,,estimatedAmount,,,amountMsgValue,,] = await client.readContract({
+                const account = await getAccount();
+                
+                const [,,estimatedAmount,,,amountMsgValue,,] = await publicClient.readContract({
                         address: '0xF251F83e40a78868FcfA3FA4599Dad6494E46034',
                         abi: [
                             {
@@ -104,7 +103,7 @@ export function registerBuyMemeToken(server: McpServer) {
                     inputAmount =  (BigInt(amountMsgValue) * BigInt(100 + 5)) / 100n
                 }
 
-                const hash = await client.writeContract({
+                const hash = await walletClient(account).writeContract({
                     account,
                     address: "0x5c952063c7fc8610FFDB798152D69F0B9550762b",
                     abi: [{

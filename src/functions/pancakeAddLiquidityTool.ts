@@ -2,6 +2,7 @@ import {
     parseAbi,
     type Address,
     Hex,
+    PrivateKeyAccount,
 } from 'viem';
 import {
     Pool,
@@ -12,7 +13,8 @@ import {
 import { Currency, CurrencyAmount, Percent, Token } from '@pancakeswap/sdk';
 
 import dotenv from 'dotenv';
-import { account, client } from '../config.js';
+import { publicClient, walletClient } from '../config.js';
+
 dotenv.config();
 
 // PancakeSwap V3 contract addresses (BSC)
@@ -40,6 +42,7 @@ const POSITION_MANAGER_ABI = [
 ];
 
 async function approveTokensIfNeeded(
+    account: PrivateKeyAccount,
     token: Currency,
     spender: Address,
     amount: string,
@@ -49,7 +52,7 @@ async function approveTokensIfNeeded(
         const tokenAddress = token.address as Address;
         const accountAddress = account.address;
 
-        const allowance = await client.readContract({
+        const allowance = await publicClient.readContract({
             address: tokenAddress,
             abi: ERC20_ABI,
             functionName: 'allowance',
@@ -57,8 +60,8 @@ async function approveTokensIfNeeded(
         });
 
         if (BigInt(allowance.toString()) < BigInt(amount)) {
-            const hash = await client.writeContract({
-                chain: client.chain,
+            
+            const hash = await walletClient(account).writeContract({
                 account: account,
                 address: tokenAddress,
                 abi: ERC20_ABI,
@@ -66,7 +69,7 @@ async function approveTokensIfNeeded(
                 args: [spender, BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')],
             });
 
-            await client.waitForTransactionReceipt({ hash });
+            await publicClient.waitForTransactionReceipt({ hash });
             console.log(`Approved ${token.symbol}`);
         }
     }
@@ -88,19 +91,20 @@ function sortTokens(
 }
 
 async function checkBalance(
+    account: PrivateKeyAccount,
     token: Currency,
     amount: CurrencyAmount<Currency>
 ) {
     const accountAddress = account.address;
     if (token.isNative) {
-        const balance = await client.getBalance({ address: accountAddress });
+        const balance = await publicClient.getBalance({ address: accountAddress });
         const balanceAmount = CurrencyAmount.fromRawAmount(token, balance.toString());
         if (balanceAmount.lessThan(amount)) {
             throw new Error(`Insufficient balance of ${token.symbol}`);
         }
         return
     }
-    const balance = await client.readContract({
+    const balance = await publicClient.readContract({
         address: token.address as Address,
         abi: ERC20_ABI,
         functionName: 'balanceOf',
@@ -119,7 +123,7 @@ async function checkBalance(
  * @param fee fee tier
  * @param amountA amount of tokenA
  * @param amountB amount of tokenB
- * @param recipient address to receive LP NFT
+ * @param account account
  * @param slippageTolerance slippage tolerance
  * @param deadline transaction deadline
  * @param priceLower lower price bound percentage (default: 80% of current price)
@@ -133,7 +137,7 @@ export async function addLiquidityV3(
     fee: FeeAmount,
     amountA: CurrencyAmount<Currency>,
     amountB: CurrencyAmount<Currency>,
-    recipient: Address,
+    account: PrivateKeyAccount,
     slippageTolerance: Percent = new Percent('50', '10000'), // default 0.5%
     deadline: number = Math.floor(Date.now() / 1000) + 20 * 60, // default 20 minutes
     priceLower: number = 0.8,
@@ -142,16 +146,16 @@ export async function addLiquidityV3(
     
 
     await Promise.all([
-        approveTokensIfNeeded(tokenA, POSITION_MANAGER_ADDRESS, amountA.quotient.toString()),
-        approveTokensIfNeeded(tokenB, POSITION_MANAGER_ADDRESS, amountB.quotient.toString()),
+        approveTokensIfNeeded(account, tokenA, POSITION_MANAGER_ADDRESS, amountA.quotient.toString()),
+        approveTokensIfNeeded(account, tokenB, POSITION_MANAGER_ADDRESS, amountB.quotient.toString()),
     ]);
 
-    await checkBalance(tokenA, amountA)
-    await checkBalance(tokenB, amountB)
+    await checkBalance(account, tokenA, amountA)
+    await checkBalance(account, tokenB, amountB)
 
     const [token0, token1, amount0, amount1] = sortTokens(tokenA, tokenB, amountA, amountB);
 
-    const poolAddress = await client.readContract({
+    const poolAddress = await publicClient.readContract({
         address: FACTORY_ADDRESS,
         abi: FACTORY_ABI,
         functionName: 'getPool',
@@ -167,12 +171,12 @@ export async function addLiquidityV3(
     }
 
     const [liquidity, slot0] = await Promise.all([
-        client.readContract({
+        publicClient.readContract({
             address: poolAddress,
             abi: POOL_ABI,
             functionName: 'liquidity'
         }),
-        client.readContract({
+        publicClient.readContract({
             address: poolAddress,
             abi: POOL_ABI,
             functionName: 'slot0'
@@ -224,12 +228,11 @@ export async function addLiquidityV3(
         amount1Desired: BigInt(amount1.quotient.toString()),
         amount0Min: BigInt(amount0Min.toString()),
         amount1Min: BigInt(amount1Min.toString()),
-        recipient,
+        recipient: account.address,
         deadline: BigInt(deadline)
     };
 
-    const hash = await client.writeContract({
-        chain: client.chain,
+    const hash = await walletClient(account).writeContract({
         address: POSITION_MANAGER_ADDRESS,
         abi: POSITION_MANAGER_ABI,
         functionName: 'mint',

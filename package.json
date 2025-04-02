@@ -8,6 +8,7 @@
   },
   "scripts": {
     "test": "node test/testServer.js",
+    "start": "node build/index.js",
     "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
     "init": "node ./build/init.js",
     "init:build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\" && node ./build/init.js",

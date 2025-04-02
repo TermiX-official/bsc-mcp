@@ -4,10 +4,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 
 export function registerGoplusSecurityCheck(server: McpServer) {
-  server.tool(
-    "securityCheck",
-    "Check security of BSC tokens",
-    {
+  server.tool("Token_Security_Check", "🔒Analyze BNBChain tokens for potential security risks powered by GoPlus", {
       tokenAddress: z.string(),
     },
     async ({ tokenAddress }) => {

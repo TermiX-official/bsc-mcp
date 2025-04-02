@@ -4,10 +4,12 @@ dotenv.config();
 
 import { 
     Address, 
+    PrivateKeyAccount, 
     formatUnits, 
     parseAbi, 
 } from "viem";
-import { account, client } from '../config.js';
+import { publicClient, } from '../config.js';
+
 
 
 const POSITION_MANAGER_ADDRESS = '0x46A15B0b27311cedF172AB29E4f4766fbE7F4364' as Address;
@@ -34,14 +36,14 @@ const masterChefV3ABI = parseAbi([
     'function positions(uint256) external view returns (uint96 nonce, address operator, address token0, address token1, uint24 fee, int24 tickLower, int24 tickUpper, uint128 liquidity, uint256 feeGrowthInside0LastX128, uint256 feeGrowthInside1LastX128, uint128 tokensOwed0, uint128 tokensOwed1)',
 ]);
 
-export const myPosition = async () => {
+export const myPosition = async (accountAddress: Address) => {
 
 
-    const balance = await client.readContract({
+    const balance = await publicClient.readContract({
         abi: masterChefV3ABI,
         address: POSITION_MANAGER_ADDRESS,
         functionName: 'balanceOf',
-        args: [account.address],
+        args: [accountAddress],
     })
 
 
@@ -55,13 +57,13 @@ export const myPosition = async () => {
             abi: masterChefV3ABI,
             address: POSITION_MANAGER_ADDRESS,
             functionName: 'tokenOfOwnerByIndex',
-            args: [account.address, BigInt(i)],
+            args: [accountAddress, BigInt(i)],
         }
         nftCalls.push(nftCall)
     }
 
 
-    const nftIds = await client.multicall<BigInt[]>({
+    const nftIds = await publicClient.multicall<BigInt[]>({
         contracts: nftCalls,
         allowFailure: false,
     })
@@ -76,7 +78,7 @@ export const myPosition = async () => {
         }
     })
 
-    const positions = await client.multicall<any[]>({
+    const positions = await publicClient.multicall<any[]>({
         contracts: positionCalls,
         allowFailure: false,
     }) as any[]
@@ -103,7 +105,7 @@ export const myPosition = async () => {
             },
         ]
         
-        const tokenInfo = await client.multicall<any[]>({
+        const tokenInfo = await publicClient.multicall<any[]>({
             contracts: infoCalls,
             allowFailure: false,
         }) as any[]
@@ -141,7 +143,7 @@ export const myPosition = async () => {
         poolCalls.push(poolCall);
     }
 
-    const pools = await client.multicall<any[]>({
+    const pools = await publicClient.multicall<any[]>({
         contracts: poolCalls,
         allowFailure: false,
     }) as any[]
@@ -155,7 +157,7 @@ export const myPosition = async () => {
         }
         slot0Calls.push(slot0Call);
     }
-    const slot0s = await client.multicall<any[]>({
+    const slot0s = await publicClient.multicall<any[]>({
         contracts: slot0Calls,
         allowFailure: false,
     }) as any[]

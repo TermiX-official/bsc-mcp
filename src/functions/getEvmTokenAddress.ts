@@ -1,14 +1,12 @@
 import {
   Address,
-  createPublicClient,
   getContract,
-  http,
   isAddress,
 } from "viem";
 import { TokenInfo } from "../types/types.js";
 import { fetchPancakeswapTokens } from "../util.js";
-import { bsc } from "viem/chains";
 import { bep20abi } from "../lib/bep20Abi.js";
+import { publicClient } from "../config.js";
 
 /**
  * Get token address and information from symbol or address
@@ -43,10 +41,6 @@ export async function getEVMTokenAddress(
       console.warn("Error searching PancakeSwap token list:", error);
     }
 
-    const publicClient = createPublicClient({
-      chain: bsc,
-      transport: http(rpcUrl),
-    });
 
     const contract = getContract({
       address: token as Address,

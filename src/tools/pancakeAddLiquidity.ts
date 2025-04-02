@@ -3,7 +3,6 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import {
     parseUnits,
-    Address,
 } from "viem";
 import { addLiquidityV3 } from "../functions/pancakeAddLiquidityTool.js";
 import { CurrencyAmount, } from "@pancakeswap/sdk";
@@ -11,14 +10,11 @@ import {
     FeeAmount
 } from '@pancakeswap/v3-sdk';
 import { getToken } from "../functions/pancakeSwapTool.js";
-import { account } from "../config.js";
+import { getAccount, } from "../config.js";
 
 export function registerPancakeAddLiquidity(server: McpServer) {
 
-    server.tool(
-        "pancakeAddLiquidity",
-        "add liquidity to pancake",
-        {
+    server.tool("Add_PancakeSwap_Liquidity", "💧Provide liquidity to PancakeSwap trading pairs", {
             token0: z.string(),
             token1: z.string(),
             token0Amount: z.string(),
@@ -36,13 +32,15 @@ export function registerPancakeAddLiquidity(server: McpServer) {
                 const amountTokenA = CurrencyAmount.fromRawAmount(tokenA, parseUnits(token0Amount, tokenA.decimals).toString());
                 const amountTokenB = CurrencyAmount.fromRawAmount(tokenB, parseUnits(token1Amount, tokenB.decimals).toString());
             
+                const account = await getAccount();
+
                 const hash = await addLiquidityV3(
                     tokenA,
                     tokenB,
                     FeeAmount.MEDIUM, // 0.3%
                     amountTokenA,
                     amountTokenB,
-                    account.address as Address
+                    account,
                 );
 
                 return {

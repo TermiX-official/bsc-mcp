@@ -7,11 +7,14 @@ import {
     getAddress, 
     zeroAddress, 
     maxUint128, 
-    parseAbi, 
+    parseAbi,
+    PrivateKeyAccount,
+    publicActions, 
 } from "viem";
 
 import dotenv from 'dotenv';
-import { account, client } from "../config.js";
+import { publicClient, walletClient } from "../config.js";
+
 dotenv.config();
 
 
@@ -142,11 +145,13 @@ const Payments_ABI = [
 const POSITION_MANAGER_ADDRESS = '0x46A15B0b27311cedF172AB29E4f4766fbE7F4364' as Address;
 const FACTORY_ADDRESS = '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865' as Address;
 
-export const removeLiquidityV3 = async (tokenId: BigInt, percent: number) => {
+export const removeLiquidityV3 = async (account: PrivateKeyAccount, tokenId: BigInt, percent: number) => {
 
     const calldatas: Hex[] = []
 
-    const positionInfo = await client.readContract({
+    const client = walletClient(account).extend(publicActions)
+
+    const positionInfo = await publicClient.readContract({
         address: POSITION_MANAGER_ADDRESS,
         abi: positionManagerABI,
         functionName: 'positions',
