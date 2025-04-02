@@ -5,10 +5,7 @@ import { bep20abi } from "../lib/bep20Abi.js";
 import { getAccount, walletClient } from "../config.js";
 
 export function registerTransferBEP20Token(server: McpServer) {
-  server.tool(
-    "transferBEP20Token",
-    "Transfer BEP-20 token by symbol or address,Before execution, check the wallet information first",
-    {
+  server.tool("Send_BEP20_Token", "📤Send any BEP-20 token to another wallet (requires wallet check first)", {
       recipientAddress: z.string(),
       amount: z.string(),
       address: z.string(),

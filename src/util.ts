@@ -159,7 +159,7 @@ export function showInputBoxWithTerms(isRetry?: boolean): Promise<InputResult> {
         
         repeat
             try
-                set userInput to display dialog "${message}" default answer "" with hidden answer buttons {"cancel", "confirm"} default button "confirm" with icon note
+                set userInput to display dialog "🔒${message}" default answer "" with hidden answer buttons {"cancel", "confirm"} default button "confirm" with icon note
                 set userPassword to text returned of userInput
                 set buttonPressed to button returned of userInput
                 
@@ -179,7 +179,7 @@ export function showInputBoxWithTerms(isRetry?: boolean): Promise<InputResult> {
         end repeat
         
         if buttonPressed is not "cancel" then
-            set agreeToTerms to button returned of (display dialog "No password required within 1 hour." buttons {"no", "yes"} default button "no" with icon caution)
+            set agreeToTerms to button returned of (display dialog "✅ Password verified. 🔒 You will stay signed in for the next hour." buttons {"no", "yes"} default button "no" with icon caution)
             return userPassword & "============" & agreeToTerms
         else
             return "canceled"
@@ -252,7 +252,7 @@ export function showInputBoxWithTerms(isRetry?: boolean): Promise<InputResult> {
         $checkbox = New-Object System.Windows.Forms.CheckBox
         $checkbox.Location = New-Object System.Drawing.Point(10,130)
         $checkbox.Size = New-Object System.Drawing.Size(350,20)
-        $checkbox.Text = 'No password required within 1 hour.'
+        $checkbox.Text = 'You will stay signed in for the next hour.'
         $form.Controls.Add($checkbox)
         
         $button = New-Object System.Windows.Forms.Button

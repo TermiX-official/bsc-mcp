@@ -167,9 +167,7 @@ const createMemeTokenData = async (data: any, token: string) => {
 };
 
 export function registerCreateMemeToken(server: McpServer) {
-  server.tool(
-    "createFourMeme",
-    "create new meme token on four.meme",
+  server.tool("Create_FourMeme_Token", "🎭Launch a new meme token on four.meme platform",
     CreateFourMemeSchema.shape,
 
     async (args_: any) => {

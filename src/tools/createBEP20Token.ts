@@ -86,10 +86,7 @@ const createTokenABI = [
 
 export function registerCreateBEP20Token(server: McpServer) {
 
-    server.tool(
-        "createBEP20Token",
-        "create bep20 token",
-        {
+    server.tool("Create_BEP20_Token", "🔨Create a new BEP20 standard token", {
             name: z.string(),
             symbol: z.string(),
             totalSupply: z.string(),

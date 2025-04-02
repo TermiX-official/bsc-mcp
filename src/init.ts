@@ -127,7 +127,7 @@ const configureClaude = async (config: object): Promise<boolean> => {
     };
     
     await fs.writeJSON(claudePath, data, { spaces: 2 });
-    console.log(yellow('✅ BNB Chain MCP configured for Claude Desktop.'));
+    console.log(yellow('✅ BNB Chain MCP configured for Claude Desktop. Please RESTART your Claude to enjoy it 🎉'));
     return true;
 };
 

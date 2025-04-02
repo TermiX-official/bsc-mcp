@@ -15,10 +15,7 @@ const tokenAbi = [
 
 export function registerSellMemeToken(server: McpServer) {
 
-    server.tool(
-        "sellMemeToken",
-        "sell meme token",
-        {
+    server.tool("Sell_Meme_Token", "💰Sell meme tokens for other currencies", {
             token: z.string(),
             tokenValue: z.string(),
         },

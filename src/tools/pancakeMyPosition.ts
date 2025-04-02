@@ -6,12 +6,7 @@ import { getAccount } from "../config.js";
 
 export function registerPancakeMyPosition(server: McpServer) {
 
-    server.tool(
-        "pancakeMyPosition",
-        "check my liquidity position on panceke",
-        {
-        },
-        async ({}) => {
+    server.tool("View_PancakeSwap_Positions", "📊View your active liquidity positions on PancakeSwap", {}, async ({}) => {
 
             try {
             

@@ -14,10 +14,7 @@ import { getAccount, } from "../config.js";
 
 export function registerPancakeAddLiquidity(server: McpServer) {
 
-    server.tool(
-        "pancakeAddLiquidity",
-        "add liquidity to pancake",
-        {
+    server.tool("Add_PancakeSwap_Liquidity", "💧Provide liquidity to PancakeSwap trading pairs", {
             token0: z.string(),
             token1: z.string(),
             token0Amount: z.string(),

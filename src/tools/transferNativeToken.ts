@@ -4,10 +4,7 @@ import { parseEther } from "viem";
 import { getAccount, walletClient } from "../config.js";
 
 export function registerTransferNativeToken(server: McpServer) {
-  server.tool(
-    "transferNativeToken",
-    "Transfer native token (BNB), Before execution, check the wallet information first",
-    {
+  server.tool("Send_BNB", "💎Transfer native token (BNB), Before execution, check the wallet information first", {
       recipientAddress: z.string(),
       amount: z.string(),
     },

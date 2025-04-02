@@ -10,10 +10,7 @@ import { getAccount, publicClient, walletClient } from "../config.js";
 
 export function registerBuyMemeToken(server: McpServer) {
 
-    server.tool(
-        "buyMemeToken",
-        "buy meme token",
-        {
+    server.tool("Buy_Meme_Token", "🚀Purchase meme tokens on BNBChain", {
             token: z.string(),
             tokenValue: z.string().default("0"),
             bnbValue: z.string().default("0"),

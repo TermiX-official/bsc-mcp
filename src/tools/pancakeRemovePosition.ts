@@ -6,10 +6,7 @@ import { getAccount } from "../config.js";
 
 export function registerPancakeRemovePosition(server: McpServer) {
 
-    server.tool(
-        "pancakeRemovePosition",
-        "remove liquidity position on panceke",
-        {
+    server.tool("Remove_PancakeSwap_Liquidity", "🔄Withdraw your liquidity from PancakeSwap pools", {
             positionId: z.string(),
             percent: z.number().max(100).min(1),
         },

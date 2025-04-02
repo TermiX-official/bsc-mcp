@@ -5,6 +5,7 @@ import {
   parseUnits,
   isAddress,
   PrivateKeyAccount,
+  Address,
 } from "viem";
 import { erc20Abi, hexToBigInt, maxUint256 } from "viem";
 import {
@@ -23,6 +24,7 @@ import {
 } from "@pancakeswap/smart-router";
 import { GraphQLClient } from "graphql-request";
 import { publicClient, walletClient } from "../config.js";
+import { bep20abi } from "../lib/bep20Abi.js";
 
 
 export const getToken = async (
@@ -52,10 +54,20 @@ export const getToken = async (
   } else {
     const tokenInfo = tokens.find((item: any) => item.address.toLowerCase() === address)
     if (!tokenInfo) {
-      throw new Error("Token not found");
+      
+      const contract = getContract({
+        address: address as Address,
+        abi: bep20abi,
+        client: publicClient,
+      });
+
+      decimal = await contract.read.decimals();
+      symbol = await contract.read.symbol();
+    } else {
+        
+      decimal = tokenInfo.decimals
+      symbol = tokenInfo.symbol
     }
-    decimal = tokenInfo.decimals
-    symbol = tokenInfo.symbol
   }
   
   return new Token(

@@ -4,10 +4,7 @@ import { getBalance } from "../functions/fetchBalanceTool.js";
 import { getAccount } from "../config.js";
 
 export function registerGetWalletInfo(server: McpServer) {
-  server.tool(
-    "getWalletInfo",
-    "Get wallet info for an address",
-    {
+  server.tool("Get_Wallet_Info", "👛View detailed balance and holdings for any wallet address", {
       address: z.string().optional(),
     },
     async ({ address }) => {
