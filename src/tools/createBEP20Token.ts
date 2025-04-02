@@ -6,7 +6,7 @@ import {
   toEventSelector,
   decodeEventLog,
 } from "viem";
-import { account, client } from "../config.js";
+import { getAccount, publicClient, walletClient } from "../config.js";
 
 const createTokenABI = [
 	{
@@ -98,8 +98,10 @@ export function registerCreateBEP20Token(server: McpServer) {
             
             try {
                 
+                const account = await getAccount();
+                
                 const contract = "0xad9e6346E87Dfb4c08a47CBDFDF715A700C03918";
-                const hash = await client.writeContract({
+                const hash = await walletClient(account).writeContract({
                     account,
                     address: contract,
                     abi: createTokenABI,
@@ -107,7 +109,7 @@ export function registerCreateBEP20Token(server: McpServer) {
                     args: [name, symbol, parseUnits(totalSupply, 18)],
                 });
                 
-                const transaction = await client.waitForTransactionReceipt({
+                const transaction = await publicClient.waitForTransactionReceipt({
                     hash: hash,
                     retryCount: 300,
                     retryDelay: 100,

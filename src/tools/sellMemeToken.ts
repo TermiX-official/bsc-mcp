@@ -5,7 +5,7 @@ import {
     parseUnits,
     type Hex,
 } from "viem";
-import { account, client } from "../config.js";
+import { getAccount, publicClient, walletClient } from "../config.js";
 
 const tokenAbi = [
     { "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" }], "name": "allowance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" },
@@ -26,7 +26,8 @@ export function registerSellMemeToken(server: McpServer) {
 
             try {
 
-                const allowanceAmount = await client.readContract({
+                const account = await getAccount();
+                const allowanceAmount = await publicClient.readContract({
                     address: token as Hex,
                     abi: tokenAbi,
                     functionName: 'allowance',
@@ -34,7 +35,7 @@ export function registerSellMemeToken(server: McpServer) {
                 }) as bigint;
                 if (allowanceAmount < parseUnits(tokenValue, 18)) {
 
-                    const hash = await client.writeContract({
+                    const hash = await walletClient(account).writeContract({
                         account,
                         address: token as Hex,
                         abi: tokenAbi,
@@ -42,7 +43,7 @@ export function registerSellMemeToken(server: McpServer) {
                         args: ['0x5c952063c7fc8610FFDB798152D69F0B9550762b', parseUnits(tokenValue, 18)],
                     });
 
-                    await client.waitForTransactionReceipt({
+                    await publicClient.waitForTransactionReceipt({
                         hash: hash,
                         retryCount: 300,
                         retryDelay: 100,
@@ -50,7 +51,7 @@ export function registerSellMemeToken(server: McpServer) {
                 }
 
 
-                const hash = await client.writeContract({
+                const hash = await walletClient(account).writeContract({
                     account,
                     address: "0x5c952063c7fc8610FFDB798152D69F0B9550762b",
                     abi: [{

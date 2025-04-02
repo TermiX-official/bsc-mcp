@@ -2,6 +2,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { removeLiquidityV3 } from "../functions/pancakeRemoveLiquidityTool.js";
+import { getAccount } from "../config.js";
 
 export function registerPancakeRemovePosition(server: McpServer) {
 
@@ -16,7 +17,8 @@ export function registerPancakeRemovePosition(server: McpServer) {
 
             try {
 
-                const hash = await removeLiquidityV3(BigInt(positionId), percent);
+                const account = await getAccount();
+                const hash = await removeLiquidityV3(account, BigInt(positionId), percent);
                 return {
                     content: [
                         {

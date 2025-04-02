@@ -2,6 +2,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { myPosition } from "../functions/pancakeSwapPosition.js";
 import { bigIntReplacer } from "../util.js";
+import { getAccount } from "../config.js";
 
 export function registerPancakeMyPosition(server: McpServer) {
 
@@ -14,7 +15,8 @@ export function registerPancakeMyPosition(server: McpServer) {
 
             try {
             
-                const positions = await myPosition();
+                const account = await getAccount();
+                const positions = await myPosition(account.address);
                 return {
                     content: [
                         {

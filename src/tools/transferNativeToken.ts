@@ -1,7 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { parseEther } from "viem";
-import { client } from "../config.js";
+import { getAccount, walletClient } from "../config.js";
 
 export function registerTransferNativeToken(server: McpServer) {
   server.tool(
@@ -14,7 +14,8 @@ export function registerTransferNativeToken(server: McpServer) {
     async ({ recipientAddress, amount }) => {
       try {
 
-        const hash = await client.sendTransaction({
+        const account = await getAccount();
+        const hash = await walletClient(account).sendTransaction({
           to: recipientAddress as `0x${string}`,
           value: parseEther(amount),
         });

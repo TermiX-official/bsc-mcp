@@ -1,5 +1,6 @@
-import { Abi, AbiFunction, isAddress, } from "viem";
-import { account, client } from "../config.js";
+import { Abi, AbiFunction, PrivateKeyAccount, isAddress, publicActions, } from "viem";
+import { publicClient, walletClient } from "../config.js";
+// import { account, client } from "../config.js";
 
 /**
  * Call a contract's function with a given wallet and arguments.
@@ -13,6 +14,7 @@ import { account, client } from "../config.js";
  * @returns The result of the contract call or transaction hash.
  */
 export async function callContractHandler(
+  account: PrivateKeyAccount,
   args: {
     abi: string;
     contractAddress: string;
@@ -51,7 +53,7 @@ export async function callContractHandler(
     functionAbi.stateMutability === "view" ||
     functionAbi.stateMutability === "pure"
   ) {
-    const tx = await client.readContract({
+    const tx = await publicClient.readContract({
       address: args.contractAddress,
       abi,
       functionName: args.functionName,
@@ -60,6 +62,8 @@ export async function callContractHandler(
     return String(tx);
   }
 
+
+  const client = walletClient(account).extend(publicActions)
   const tx = await client.simulateContract({
     account: account,
     abi,
