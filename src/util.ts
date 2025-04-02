@@ -152,6 +152,9 @@ export function showInputBoxWithTerms(isRetry?: boolean): Promise<InputResult> {
       case 'darwin':
         // For macOS, we use AppleScript to show a dialog with both input and checkbox
         // The AppleScript is more complex but allows for a better UX
+        if (isRetry) {
+          message = "❌" + message
+        }
         const appleScript = `
         tell application "System Events"
         set userPassword to ""
@@ -159,7 +162,7 @@ export function showInputBoxWithTerms(isRetry?: boolean): Promise<InputResult> {
         
         repeat
             try
-                set userInput to display dialog "🔒${message}" default answer "" with hidden answer buttons {"cancel", "confirm"} default button "confirm" with icon note
+                set userInput to display dialog "${message}" default answer "" with hidden answer buttons {"cancel", "confirm"} default button "confirm" with icon note
                 set userPassword to text returned of userInput
                 set buttonPressed to button returned of userInput
                 
@@ -179,7 +182,7 @@ export function showInputBoxWithTerms(isRetry?: boolean): Promise<InputResult> {
         end repeat
         
         if buttonPressed is not "cancel" then
-            set agreeToTerms to button returned of (display dialog "✅ Password verified. 🔒 You will stay signed in for the next hour." buttons {"no", "yes"} default button "no" with icon caution)
+            set agreeToTerms to button returned of (display dialog "🔒 You will stay signed in for the next hour." buttons {"no", "yes"} default button "no" with icon caution)
             return userPassword & "============" & agreeToTerms
         else
             return "canceled"
