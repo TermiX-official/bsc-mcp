@@ -5,7 +5,7 @@ import { getAccount } from "../config.js";
 
 export function registerGetWalletInfo(server: McpServer) {
   server.tool("Get_Wallet_Info", "👛View detailed balance and holdings for any wallet address", {
-      address: z.string().optional(),
+      address: z.string().optional().describe("When querying the user's own wallet value, it is null"),
     },
     async ({ address }) => {
       try {
