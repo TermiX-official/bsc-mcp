@@ -131,21 +131,38 @@ export function showInputBoxWithTerms(): Promise<InputResult> {
         // For macOS, we use AppleScript to show a dialog with both input and checkbox
         // The AppleScript is more complex but allows for a better UX
         const appleScript = `
-tell application "System Events"
-    repeat
-        try
-            set userInput to display dialog "Enter your Wallet Password (must be exactly 6 characters):" default answer "" with hidden answer buttons {"cancel", "confirm"} default button "confirm" with icon note
-            set userPassword to text returned of userInput
-            if length of userPassword is 6 then exit repeat
-            display dialog "Password must be exactly 6 characters." buttons {"confirm"} default button "confirm" with icon caution
-        on error
-            return "null============false" -- 用户取消，直接返回，不再执行后续对话框
-        end try
-    end repeat
-
-    set agreeToTerms to button returned of (display dialog "No password required within 1 hour." buttons {"no", "yes"} default button "no" with icon caution)
-    return userPassword & "============" & agreeToTerms
-end tell
+        tell application "System Events"
+        set userPassword to ""
+        set buttonPressed to ""
+        
+        repeat
+            try
+                set userInput to display dialog "Enter your Wallet Password (must be exactly 6 characters):" default answer "" with hidden answer buttons {"cancel", "confirm"} default button "confirm" with icon note
+                set userPassword to text returned of userInput
+                set buttonPressed to button returned of userInput
+                
+                if buttonPressed is "cancel" then
+                    exit repeat
+                end if
+                
+                if length of userPassword is 6 then
+                    exit repeat
+                end if
+                
+                display dialog "Password must be exactly 6 characters." buttons {"confirm"} default button "confirm" with icon caution
+            on error
+                -- Handle any errors (like when user clicks the red close button)
+                exit repeat
+            end try
+        end repeat
+        
+        if buttonPressed is not "cancel" then
+            set agreeToTerms to button returned of (display dialog "No password required within 1 hour." buttons {"no", "yes"} default button "no" with icon caution)
+            return userPassword & "============" & agreeToTerms
+        else
+            return "canceled"
+        end if
+    end tell
         `;
 
         exec(`osascript -e '${appleScript}'`, (error, stdout, stderr) => {
@@ -159,6 +176,10 @@ end tell
             return;
           }
 
+          if (stdout.trim() === "canceled") {
+              reject(new Error("Please enter the password before using ❕"));
+              return;
+          }
           const [password, agree] = stdout.trim().split("============");
           resolve({
             value: password,
