@@ -53,7 +53,6 @@ To configure the server, create a `.env` file in the root directory and specify 
 ```sh
 BSC_WALLET_PRIVATE_KEY=your_private_key_here
 BSC_RPC_URL=https://bsc-dataseed.binance.org
-MORALIS_API_KEY=your_moralis_api_key_here  # Optional: Use your Moralis API key if you want to fetch token balances from Moralis 
 ```
 
 ## Integration with Claude Desktop
@@ -88,8 +87,7 @@ Add the following configuration:
             ],
             "env": {
                 "BSC_WALLET_PRIVATE_KEY": "BSC_WALLET_PRIVATE_KEY",
-                "BSC_RPC_URL": "BSC_RPC_URL",
-                "MORALIS_API_KEY": "MORALIS_API_KEY"
+                "BSC_RPC_URL": "BSC_RPC_URL"
             },
             "disabled": false,
             "autoApprove": []

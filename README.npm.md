@@ -35,7 +35,6 @@ bnbchain-mcp --init
 
 You’ll be prompted to enter:
 
-- ✅ **Moralis API Key** *(optional)*  
 - ✅ **BSC Wallet Private Key** *(required)*  
 - ✅ **Custom RPC URL** *(optional, defaults to:* `https://bsc-dataseed.binance.org` *)
 
@@ -94,16 +93,6 @@ node build/index.js
 ```bash
 bnbchain-mcp --init
 ```
-
----
-
-## 🔑 Get Moralis API Key (For Wallet Balance)
-
-📎 [Moralis API Docs](https://docs.moralis.com/2.0/web3-data-api/evm/get-your-api-key)
-
-1. Visit: [https://moralis.io](https://moralis.io)
-2. Sign up → Dashboard → Web3 Data → API Keys
-3. Copy key and paste during CLI setup
 
 ---
 

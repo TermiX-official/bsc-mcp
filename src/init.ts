@@ -43,13 +43,6 @@ const getInputs = async (): Promise<UserInputs> => {
     const questions: PromptObject[] = [
         {
             type: 'password',
-            name: 'moralis',
-            message: '🔑 Enter Moralis API Key:( Checkout the link for more info : https://docs.moralis.com/web3-data-api/evm/get-your-api-key )',
-            validate: (val: string) =>
-                val.trim() === '' ? 'Moralis API Key is required!' : true,
-        },
-        {
-            type: 'password',
             name: 'walletPassword',
             message: '🔐 Enter your Wallet Password (must be exactly 6 characters):',
             validate: (val: string) => {
@@ -79,7 +72,6 @@ const getInputs = async (): Promise<UserInputs> => {
 const generateEnvFile = async (privateKey: string, walletPasswordEncrypt: string, rpcUrl?: string, moralis?: string): Promise<void> => {
     const envContent = `BSC_WALLET_PRIVATE_KEY=${privateKey}
 BSC_RPC_URL=${rpcUrl || ''}
-MORALIS_API_KEY=${moralis || ''}
 WALLET_PASSWORD=${walletPasswordEncrypt || ''}
 `.trim();
 
@@ -99,7 +91,6 @@ const generateConfig = async (privateKey: string, walletPasswordEncrypt: string,
                 BSC_WALLET_PRIVATE_KEY: privateKey,
                 BSC_RPC_URL: rpcUrl || '',
                 WALLET_PASSWORD: walletPasswordEncrypt || '',
-                MORALIS_API_KEY: moralis || ''
             },
             disabled: false,
             autoApprove: []
