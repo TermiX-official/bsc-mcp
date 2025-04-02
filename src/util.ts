@@ -156,7 +156,6 @@ end tell
             return;
           }
 
-          console.log(stdout)
           const [password, agree] = stdout.trim().split("============");
           resolve({
             value: password,
