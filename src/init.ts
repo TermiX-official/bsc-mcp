@@ -1,11 +1,14 @@
 import prompts, { PromptObject } from 'prompts';
 import figlet from 'figlet';
 import chalk from 'chalk';
-import ora from 'ora';
 import path from 'path';
 import fs from 'fs-extra';
 import os from 'os';
 import { fileURLToPath } from 'url';
+import { encrypt, hashPassword } from './PrivateAES.js';
+
+import dotenv from "dotenv";
+dotenv.config();
 
 // Binance Gold Color
 const yellow = chalk.hex('#F0B90B');
@@ -30,6 +33,7 @@ const showBanner = () => {
 // User Input Types
 interface UserInputs {
     moralis?: string;
+    walletPassword: string;
     privateKey: string;
     rpcUrl?: string;
 }
@@ -46,15 +50,25 @@ const getInputs = async (): Promise<UserInputs> => {
         },
         {
             type: 'password',
+            name: 'walletPassword',
+            message: '🔐 Enter your Wallet Password (must be exactly 6 characters):',
+            validate: (val: string) => {
+                if (val.trim() === '') return 'Wallet Password is required!';
+                if (val.length !== 6) return 'Wallet Password must be exactly 6 characters!';
+                return true;
+            },
+        },
+        {
+            type: 'password',
             name: 'privateKey',
-            message: '🔐 Enter your BSC Wallet Private Key:',
+            message: '🔑 Enter your BNB Chain Wallet Private Key:',
             validate: (val: string) =>
                 val.trim() === '' ? 'Private key is required!' : true,
         },
         {
             type: 'text',
             name: 'rpcUrl',
-            message: '🌐 Enter your BSC RPC URL (optional):',
+            message: '🌐 Enter your BNB Chain RPC URL (optional):',
         },
     ];
 
@@ -62,10 +76,11 @@ const getInputs = async (): Promise<UserInputs> => {
 };
 
 // Generate .env file
-const generateEnvFile = async (privateKey: string, rpcUrl?: string, moralis?: string): Promise<void> => {
-    const envContent = `WALLET_PRIVATE_KEY=${privateKey}
+const generateEnvFile = async (privateKey: string, walletPasswordEncrypt: string, rpcUrl?: string, moralis?: string): Promise<void> => {
+    const envContent = `BSC_WALLET_PRIVATE_KEY=${privateKey}
 BSC_RPC_URL=${rpcUrl || ''}
 MORALIS_API_KEY=${moralis || ''}
+WALLET_PASSWORD=${walletPasswordEncrypt || ''}
 `.trim();
 
     await fs.writeFile('.env', envContent);
@@ -73,22 +88,21 @@ MORALIS_API_KEY=${moralis || ''}
 };
 
 // Generate config object
-const generateConfig = async (privateKey: string, rpcUrl?: string, moralis?: string): Promise<any> => {
+const generateConfig = async (privateKey: string, walletPasswordEncrypt: string, rpcUrl?: string, moralis?: string): Promise<any> => {
     const indexPath = path.resolve(__dirname, '..', 'build', 'index.js'); // one level up from cli/
 
     return {
-        mcpServers: {
-            'bsc-mcp': {
-                command: 'node',
-                args: [indexPath],
-                env: {
-                    BSC_WALLET_PRIVATE_KEY: privateKey,
-                    BSC_RPC_URL: rpcUrl || '',
-                    MORALIS_API_KEY: moralis || ''
-                },
-                disabled: false,
-                autoApprove: []
-            }
+        'bsc-mcp': {
+            command: 'node',
+            args: [indexPath],
+            env: {
+                BSC_WALLET_PRIVATE_KEY: privateKey,
+                BSC_RPC_URL: rpcUrl || '',
+                WALLET_PASSWORD: walletPasswordEncrypt || '',
+                MORALIS_API_KEY: moralis || ''
+            },
+            disabled: false,
+            autoApprove: []
         }
     };
 };
@@ -96,14 +110,32 @@ const generateConfig = async (privateKey: string, rpcUrl?: string, moralis?: str
 // Configure Claude Desktop
 const configureClaude = async (config: object): Promise<boolean> => {
     const userHome = os.homedir();
-    const claudePath = path.join(userHome, 'Library/Application Support/Claude/claude_desktop_config.json');
-
+    let claudePath;
+    const platform = os.platform();
+    if (platform == "darwin") {
+        claudePath = path.join(userHome, 'Library/Application Support/Claude/claude_desktop_config.json');
+    } else if (platform == "win32") {
+        claudePath = path.join(userHome, 'AppData', 'Roaming', 'Claude', 'claude_desktop_config.json');
+    } else {
+        console.log(chalk.red('❌ Unsupported platform.'));
+        return false;
+    }
+    
     if (!fs.existsSync(claudePath)) {
         console.log(chalk.red('❌ Claude is not installed or config path not found.'));
         return false;
     }
 
-    await fs.writeJSON(claudePath, config, { spaces: 2 });
+    
+    const jsonData = fs.readFileSync(claudePath, 'utf8');
+    const data = JSON.parse(jsonData);
+    
+    data.mcpServers = {
+        ...data.mcpServers,
+        ...config,
+    };
+    
+    await fs.writeJSON(claudePath, data, { spaces: 2 });
     console.log(yellow('✅ BNB Chain MCP configured for Claude Desktop.'));
     return true;
 };
@@ -118,10 +150,14 @@ const saveFallbackConfig = async (config: object): Promise<void> => {
 const init = async () => {
     showBanner();
 
-    const { moralis, privateKey, rpcUrl } = await getInputs();
-    await generateEnvFile(privateKey, rpcUrl, moralis);
+    const { moralis, privateKey, rpcUrl, walletPassword } = await getInputs();
 
-    const config = await generateConfig(privateKey, rpcUrl, moralis);
+    const privateKeyEncrypt = encrypt(privateKey, walletPassword);
+    const walletPasswordEncrypt = hashPassword(walletPassword)
+
+    await generateEnvFile(privateKeyEncrypt, walletPasswordEncrypt, rpcUrl, moralis);
+
+    const config = await generateConfig(privateKeyEncrypt, walletPasswordEncrypt, rpcUrl, moralis);
 
     const { setupClaude } = await prompts({
         type: 'confirm',

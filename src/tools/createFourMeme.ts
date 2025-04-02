@@ -6,7 +6,8 @@ import {
   type Hex,
   decodeEventLog,
 } from "viem";
-import { client, account } from "../config.js";
+import { PrivateKeyAccount } from "viem/accounts";
+import { getAccount, publicClient, } from "../config.js";
 
 export const CreateFourMemeSchema = z.object({
   name: z.string().describe("name"),
@@ -24,7 +25,7 @@ const fourMemeToken = {
   time: 0,
 };
 
-export const loginFourMeme = async (): Promise<string> => {
+const loginFourMeme = async (account: PrivateKeyAccount): Promise<string> => {
   if (Date.now() - fourMemeToken.time < 1000 * 60 * 10) {
     return fourMemeToken.token;
   }
@@ -106,7 +107,7 @@ export const loginFourMeme = async (): Promise<string> => {
   return fourMemeToken.token;
 };
 
-export const createMemeTokenData = async (data: any, token: string) => {
+const createMemeTokenData = async (data: any, token: string) => {
   const createResp = await fetch(
     `https://four.meme/meme-api/v1/private/token/create`,
     {
@@ -170,25 +171,28 @@ export function registerCreateMemeToken(server: McpServer) {
     "createFourMeme",
     "create new meme token on four.meme",
     CreateFourMemeSchema.shape,
-    
+
     async (args_: any) => {
       try {
-          const { twitterUrl, telegramUrl, webUrl, ...data} = args_
-          const args:any = data;
-          if (twitterUrl !== '') {
-              args.twitterUrl = twitterUrl;
-          }
-          if (telegramUrl !== '') {
-              args.telegramUrl = telegramUrl;
-          }
-          if (webUrl !== '') {
-              args.webUrl = webUrl;
-          }
+        const { twitterUrl, telegramUrl, webUrl, ...data } = args_
+        const args: any = data;
+        if (twitterUrl !== '') {
+          args.twitterUrl = twitterUrl;
+        }
+        if (telegramUrl !== '') {
+          args.telegramUrl = telegramUrl;
+        }
+        if (webUrl !== '') {
+          args.webUrl = webUrl;
+        }
+
+        const account = await getAccount();
+
         const loginToken = await loginFourMeme(account);
         const transactionData = await createMemeTokenData(args, loginToken);
 
         const contract = "0x5c952063c7fc8610FFDB798152D69F0B9550762b";
-        const hash = await client.writeContract({
+        const hash = await walletClient(account).writeContract({
           account,
           address: contract,
           abi: [
@@ -219,7 +223,7 @@ export function registerCreateMemeToken(server: McpServer) {
           value: transactionData.value,
         });
 
-        const transaction = await client.waitForTransactionReceipt({
+        const transaction = await publicClient.waitForTransactionReceipt({
           hash: hash,
           retryCount: 300,
           retryDelay: 1000,

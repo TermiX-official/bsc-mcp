@@ -1,7 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { getBalance } from "../functions/fetchBalanceTool.js";
-import { account } from "../config.js";
+import { getAccount } from "../config.js";
 
 export function registerGetWalletInfo(server: McpServer) {
   server.tool(
@@ -13,10 +13,11 @@ export function registerGetWalletInfo(server: McpServer) {
     async ({ address }) => {
       try {
         if (address === '' || !address) {
+          const account = await getAccount();
           address = account.address
         }
         const balance = await getBalance(address);
-        
+
         return {
           content: [
             {

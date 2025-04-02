@@ -1,14 +1,11 @@
 import {
-  createPublicClient,
-  createWalletClient,
   Hash,
-  http,
   getContract,
   Hex,
   parseUnits,
   isAddress,
+  PrivateKeyAccount,
 } from "viem";
-import { bsc } from "viem/chains";
 import { erc20Abi, hexToBigInt, maxUint256 } from "viem";
 import {
   ChainId,
@@ -25,7 +22,7 @@ import {
   SwapRouter,
 } from "@pancakeswap/smart-router";
 import { GraphQLClient } from "graphql-request";
-import { account } from "../config.js";
+import { publicClient, walletClient } from "../config.js";
 
 
 export const getToken = async (
@@ -72,7 +69,7 @@ export const getToken = async (
 }
 
 export const pancakeSwap = async ({
-  // privateKey,
+  account,
   inputToken,
   outputToken,
   amount,
@@ -81,20 +78,11 @@ export const pancakeSwap = async ({
   amount: string;
   inputToken: string;
   outputToken: string;
+  account: PrivateKeyAccount;
 }): Promise<Hash> => {
 
   const chainId = 56
 
-  const rpcUrl = process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org";
-  const publicClient = createPublicClient({
-    chain: bsc,
-    transport: http(rpcUrl),
-  });
-  const walletClient = createWalletClient({
-    chain: bsc,
-    transport: http(rpcUrl),
-    account: account,
-  });
 
   let currencyA = await getToken(inputToken);
   let currencyB = await getToken(outputToken);
@@ -108,7 +96,7 @@ export const pancakeSwap = async ({
       address: currencyA.address,
       abi: erc20Abi,
       client: {
-        wallet: walletClient,
+        wallet: walletClient(account),
         public: publicClient,
       },
     });
@@ -138,8 +126,6 @@ export const pancakeSwap = async ({
   })
   const v3SubgraphClient = new GraphQLClient('https://api.thegraph.com/subgraphs/name/pancakeswap/exchange-v3-bsc1')
   const v2SubgraphClient = new GraphQLClient('https://proxy-worker-api.pancakeswap.com/bsc-exchange1')
-
-
 
   const [v2Pools, v3Pools] = await Promise.all([
     SmartRouter.getV3CandidatePools({
@@ -190,7 +176,7 @@ export const pancakeSwap = async ({
     return (value * (10000n + margin)) / 10000n;
   };
 
-  const txHash = await walletClient.sendTransaction({
+  const txHash = await walletClient(account).sendTransaction({
     account: account,
     chainId,
     // @ts-ignore

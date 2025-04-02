@@ -1,9 +1,8 @@
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { parseUnits, getContract, Address } from "viem";
-import { getEVMTokenAddress } from "../functions/getEvmTokenAddress.js";
+import { parseUnits, getContract, Address, publicActions } from "viem"; 
 import { bep20abi } from "../lib/bep20Abi.js";
-import { client } from "../config.js";
+import { getAccount, walletClient } from "../config.js";
 
 export function registerTransferBEP20Token(server: McpServer) {
   server.tool(
@@ -17,6 +16,9 @@ export function registerTransferBEP20Token(server: McpServer) {
     async ({ recipientAddress, amount, address }) => {
       try {
         // Get token details including address and decimals
+
+        const account = await getAccount();
+        const client = walletClient(account).extend(publicActions)
 
         const contract = getContract({
           address: address as Address,
