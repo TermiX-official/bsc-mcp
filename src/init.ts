@@ -61,7 +61,7 @@ const getInputs = async (): Promise<UserInputs> => {
         {
             type: 'password',
             name: 'privateKey',
-            message: '🔐 Enter your BSC Wallet Private Key:',
+            message: '🔑 Enter your BSC Wallet Private Key:',
             validate: (val: string) =>
                 val.trim() === '' ? 'Private key is required!' : true,
         },
