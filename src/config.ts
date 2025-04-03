@@ -23,15 +23,19 @@ export const getAccount = async () => {
 
     const pk = decrypt(BSC_WALLET_PRIVATE_KEY, password)
 
-    account = privateKeyToAccount(
-        pk as Hex
-    );
     if (agreed) {
+        account = privateKeyToAccount(
+            pk as Hex
+        );
         setTimeout(() => {
             account = null;
         }, 1000 * 60 * 5);
+        return account;
+    } else {
+        return privateKeyToAccount(
+            pk as Hex
+        );
     }
-    return account;
 };
 
 export const getClient = async () => {
