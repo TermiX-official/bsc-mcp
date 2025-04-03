@@ -29,7 +29,7 @@ export const getAccount = async () => {
     if (agreed) {
         setTimeout(() => {
             account = null;
-        }, 1000 * 60 * 5);
+        }, 1000 * 60 * 60);
     }
     return account;
 };
