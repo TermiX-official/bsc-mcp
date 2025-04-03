@@ -1,10 +1,10 @@
 {
   "name": "bnbchain-mcp",
-  "version": "1.0.8",
+  "version": "1.0.12",
   "main": "index.js",
   "type": "module",
   "bin": {
-    "bnbchain-mcp": "./build/index.js"
+    "bnbchain-mcp": "build/index.js"
   },
   "scripts": {
     "test": "node test/testServer.js",

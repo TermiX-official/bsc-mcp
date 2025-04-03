@@ -1,223 +1,134 @@
 
 
-https://github.com/user-attachments/assets/b3ed768a-6fd9-4b09-bcdd-dd122965f46e
+---
 
-# BNB Chain MCP Server
+## 📦 BNBChain MCP – Binance Smart Chain Tool Server (MCP + CLI Ready)
 
-## Overview
+> A plug-and-play MCP tool server to **send BNB**, **transfer BEP-20 tokens**, **deploy tokens**, and **interact with smart contracts** on the **Binance Smart Chain (BSC)** — built for **Claude Desktop**, **AI agents**, and **developers.**
 
-BNB Chain MCP Server is a backend service designed to execute transactions on the Binance Smart Chain (BSC). It facilitates seamless interaction with the blockchain, including sending native BNB and BEP-20 token transfers. The server utilizes the Model Context Protocol (MCP) framework to ensure secure, structured, and efficient transactions.
+---
 
-### Key Functionalities:
+### ⚙️ Core Capabilities
 
-- Retrieve and manage wallet addresses
-- Fetch and list wallet balances
-- Execute native BNB transfers
-- Transfer BEP-20 tokens using contract addresses or symbols
-- Call and interact with smart contract functions
-- Securely manage BEP-20 tokens
-- create bsc memecoin
-- create bep20 token
+- 🔐 Secure token & native transfers via CLI or MCP
+- 🧱 Interact with smart contracts (ABI/function-based)
+- 🔄 PancakeSwap integration for swaps & liquidity
+- ⚙️ Create meme tokens & deploy BEP-20 smart contracts
+- 🧠 Native Claude Desktop integration via MCP
+- 🔧 CLI-ready, MCP-compliant, developer-friendly
+- 🔑 Password-protected private keys
 
-## Features
+---
 
-- **Secure Transactions**: Supports both native BNB and BEP-20 token transfers.
-- **Private Key Management**: Uses environment variables to protect sensitive data.
-- **Smart Contract Interaction**: Supports function calls to BSC smart contracts.
-- **Blockchain Integration**: Built on Viem for reliable BSC blockchain interaction.
-- **Customizable RPC Support**: Allows configuration of RPC URLs for optimized performance.
-- **Standardized MCP Integration**: Enables structured data interaction for AI-driven automation.
+## 🛠 Installation & Setup
 
-## Requirements
+### 1. Install
 
-Before setting up the BNB Chain MCP Server, ensure you have the following installed:
-
-- Node.js (v16 or later)
-- npm or yarn
-- A valid Binance Smart Chain (BSC) wallet private key
-
-## Installation
-
-Clone the repository and install dependencies:
-
-```sh
-git clone https://github.com/your-repo/bsc-mcp-server.git
-cd bsc-mcp-server
-npm install  # or yarn install
+```bash
+npm install -g bnbchain-mcp
 ```
 
-## Configuration
+### 2. Run the CLI Setup Wizard
 
-To configure the server, create a `.env` file in the root directory and specify the following variables:
-
-```sh
-BSC_WALLET_PRIVATE_KEY=your_private_key_here
-BSC_RPC_URL=https://bsc-dataseed.binance.org
+```bash
+bnbchain-mcp --init
 ```
 
-## Integration with Claude Desktop
+You’ll be prompted to enter:
 
-Before integrating this MCP server with Claude Desktop, ensure you have the following installed:
+- ✅ **BSC Wallet Private Key** *(required)* 
+- ✅ **Wallet Password** *(required, must be 6 characters)*
+- ✅ **Custom RPC URL** *(optional, defaults to:* `https://bsc-dataseed.binance.org` *)
 
-- Claude Desktop
+---
 
-Then Build the server using the following command:
+## 🧠 Claude Desktop Integration
 
-```sh
-npm run build  
+After CLI setup, the tool can **auto-configure itself into Claude Desktop**.
+
+📍 File modified:
+
+```
+~/Library/Application Support/Claude/claude_desktop_config.json
 ```
 
-To add this MCP server to Claude Desktop:
+Claude will detect and run this MCP server with your selected tools.
 
-Create or edit the Claude Desktop configuration file at:
+---
 
-- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
-- Linux: `~/.config/Claude/claude_desktop_config.json`
+## 🔨 Supported MCP Tools
 
-Add the following configuration:
+| Tool Name             | Description                              |
+|----------------------|------------------------------------------|
+| `transferNativeToken` | Send BNB to a wallet                     |
+| `transferBEP20Token`  | Transfer BEP-20 token via symbol/address |
+| `pancakeSwap`         | Swap tokens via PancakeSwap              |
+| `createFourMeme`      | Create meme token on Four.Meme           |
+| `createBEP20Token`    | Deploy a BEP-20 contract                 |
+| `getBalance`          | Get token + native balance               |
+| `callContractFunction`| Custom contract calls via ABI            |
+| `getWalletInfo`       | Get wallet info for an address           |
+| `securityCheck`       | Check token security of BSC tokens       |
+| `pancakeAddLiquidity` | Add liquidity to PancakeSwap             |
+| `pancakeMyPosition`   | View your PancakeSwap positions          |
+| `pancakeRemovePosition`| Remove liquidity from PancakeSwap        |
+| `sellMemeToken`        | Sell meme token on Four.Meme             |
+| ...and more coming soon 🔧 |
 
-```json
-{
-    "mcpServers": {
-        "bsc-mcp": {
-            "command": "node",
-            "args": [
-                "/Users/Username/Desktop/bsc-mpc/build/index.js"
-            ],
-            "env": {
-                "BSC_WALLET_PRIVATE_KEY": "BSC_WALLET_PRIVATE_KEY",
-                "BSC_RPC_URL": "BSC_RPC_URL"
-            },
-            "disabled": false,
-            "autoApprove": []
-        }
-    }
-}
-```
-Make sure to pass the correct location of the `index.js` file in the `command` and `args` fields.
+---
 
-Restart Claude Desktop for the changes to take effect.
+## 🧪 Development Workflow
 
-## Usage ( For Connecting MCP HOST other than Claude )
-
-### Start the Server
-
-To start the MCP server, run:
-
-```sh
-npm start  # or node index.js
+### Compile TypeScript:
+```bash
+npm run build
 ```
 
-
-
-### Transfer BEP-20 Tokens
-
-Use the `transferBEP20Token` tool to send tokens by specifying the contract address or symbol:
-
-```json
-{
-  "recipientAddress": "0xRecipientAddress",
-  "amount": "10",
-  "token": "USDT"
-}
+### Start MCP Server:
+```bash
+npm start
+# or
+node build/index.js
 ```
 
-## Functions
+### Re-configure:
+```bash
+bnbchain-mcp --init
+```
 
-1. **Transfer Native Token (BNB) - `transferNativeToken`**
-   ```json
-   {
-       "recipientAddress": "0xRecipientAddress",
-       "amount": "0.1"
-   }
-   ```
+---
 
-2. **Transfer BEP-20 Token by Symbol or Address - `transferBEP20Token`**
-   ```json
-   {
-       "recipientAddress": "0xRecipientAddress",
-       "amount": "10",
-       "token": "USDT"
-   }
-   ```
+## 📘 Model Context Protocol (MCP)
 
-3. **Swap Tokens via PancakeSwap - `pancakeSwap`**
-   ```json
-   {
-       "inputToken": "TOKEN1",
-       "outputToken": "TOKEN2",
-       "amount": "100"
-   }
-   ```
+This project is built on **Model Context Protocol** – a standard to help agents and models interact with structured tool APIs.
 
-4. **Fetch Native and Token Balances - `getBalance`**
-   ```json
-   {
-       "address": "0xWalletAddress"
-   }
-   ```
+**MCP Benefits**:
+- ✅ Structured input/output
+- ✅ Claude + OpenAI compatible
+- ✅ Secure + serverless-ready
 
-5. **Call a Contract Function - `callContractFunction`**
-   ```json
-   {
-       "abi": "contractABI",
-       "contractAddress": "0xContractAddress",
-       "functionName": "functionName",
-       "functionArgs": "arguments",
-       "value": "0"
-   }
-   ```
+---
 
-6. **Create a Meme Token on Four.Meme - `createFourMeme`**
-   ```json
-   {
-       "name": "TokenName",
-       "shortName": "TKN",
-       "imgUrl": "https://tokenimage.com",
-       "preSale": "1000",
-       "desc": "Token Description",
-       "twitterUrl": "https://twitter.com/token",
-       "telegramUrl": "https://t.me/token",
-       "webUrl": "https://tokenwebsite.com"
-   }
-   ```
+## ✅ Roadmap
 
-7. **Create a BEP-20 Token - `createBEP20Token`**
-   ```json
-   {
-       "name": "TokenName",
-       "symbol": "TKN",
-       "totalSupply": "1000000"
-   }
-   ```
+- [x] CLI Configuration Wizard
+- [x] Claude Desktop Integration
+- [x] Token Deploy + Transfer
+- [ ] Token charting tools (DEXTools, Gecko)
+- [ ] Telegram auto-trading agent
+- [ ] AI assistant with BSC on-chain brain
 
-## Model Context Protocol (MCP)
+---
 
-The **Model Context Protocol (MCP)** is an open standard designed to enhance the way applications interact with AI models and blockchain-based computational systems. MCP establishes structured context that improves the efficiency of automated transactions and decentralized applications.
+## 🤝 Contributing
 
-### Benefits of MCP:
+Feel free to fork, PR, or raise issues.
+We're building **tool-first, AI-ready infrastructure** for the next wave of Web3 agents. Join us!
 
-- **Standardization**: Defines a unified approach for application interactions.
-- **Efficiency**: Reduces computational overhead and improves transaction speed.
-- **Interoperability**: Supports integration across multiple platforms and blockchain ecosystems.
+---
 
-## Error Handling
+## 🛡️ License
 
-When a transaction fails, the server returns an error message with details. Check the console logs for more debugging information. Common error scenarios include:
+MIT — Use freely, contribute openly.
 
-- Insufficient funds in the wallet
-- Invalid recipient address
-- Network congestion or RPC issues
-
-## Security Considerations
-
-- **Private Key Protection**: Never expose or hardcode your private key. Use environment variables.
-- **RPC Provider Selection**: Choose a trusted and reliable BSC RPC provider to prevent network issues.
-- **Transaction Limits**: Implement checks to avoid unintended large transfers.
-
-## License
-
-This project is open-source under the MIT License.
-
-For contributions, bug reports, or feature requests, submit an issue on [GitHub](https://github.com/your-repo/bsc-mcp-server).
+---
