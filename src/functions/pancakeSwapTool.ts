@@ -172,7 +172,7 @@ export const pancakeSwap = async ({
 
   const { value, calldata } = SwapRouter.swapCallParameters(trade, {
     recipient: account.address,
-    slippageTolerance: new Percent(1),
+    slippageTolerance: new Percent(500, 10000),
   })
 
   const tx = {
