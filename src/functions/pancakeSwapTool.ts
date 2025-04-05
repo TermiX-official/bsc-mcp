@@ -167,6 +167,7 @@ export const pancakeSwap = async ({
     poolProvider: SmartRouter.createStaticPoolProvider(pools),
     quoteProvider,
     quoterOptimization: true,
+    
   }) as SmartRouterTrade<TradeType>
 
 

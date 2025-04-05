@@ -124,8 +124,8 @@ export async function getPassword(isRetry?: boolean): Promise<InputResult> {
   if (!passwordResp.value) {
       throw new Error("You did not enter a password.");
   }
-  if (passwordResp.value.length != 6) {
-      throw new Error("The password must be 6 characters long");
+  if (passwordResp.value.length != 8) {
+      throw new Error("The password must be 8 characters long");
   }
   const password = passwordResp.value;
   const curPassword = process.env.WALLET_PASSWORD
@@ -170,11 +170,11 @@ export function showInputBoxWithTerms(isRetry?: boolean): Promise<InputResult> {
                     exit repeat
                 end if
                 
-                if length of userPassword is 6 then
+                if length of userPassword is 8 then
                     exit repeat
                 end if
                 
-                display dialog "Password must be exactly 6 characters." buttons {"confirm"} default button "confirm" with icon caution
+                display dialog "Password must be exactly 8 characters." buttons {"confirm"} default button "confirm" with icon caution
             on error
                 -- Handle any errors (like when user clicks the red close button)
                 exit repeat
@@ -264,8 +264,8 @@ export function showInputBoxWithTerms(isRetry?: boolean): Promise<InputResult> {
         $button.Text = 'Confirm'
         $button.Add_Click({
             # Validate password length
-            if ($passwordTextBox.Text.Length -ne 6) {
-                $errorLabel.Text = 'Password must be exactly 6 characters.'
+            if ($passwordTextBox.Text.Length -ne 8) {
+                $errorLabel.Text = 'Password must be exactly 8 characters.'
             } else {
                 $form.DialogResult = [System.Windows.Forms.DialogResult]::OK
                 $form.Close()
