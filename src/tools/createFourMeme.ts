@@ -317,7 +317,6 @@ export function registerCreateMemeToken(server: McpServer) {
           ],
         };
       } catch (error) {
-        console.error("create token on four.meme failed:", error);
         const errorMessage =
           error instanceof Error ? error.message : String(error);
         return {

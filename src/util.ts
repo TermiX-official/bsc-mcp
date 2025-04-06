@@ -5,7 +5,8 @@ import path from 'path';
 import os from 'os';
 
 import { Native, ERC20Token } from "@pancakeswap/sdk";
-import { hashPassword } from "./PrivateAES.js";
+import { decrypt, hashPassword } from "./PrivateAES.js";
+import { privateKeyToAccount } from "viem/accounts";
 
 /**
  * Cache for PancakeSwap token list data
@@ -128,15 +129,24 @@ export async function getPassword(isRetry?: boolean): Promise<InputResult> {
       throw new Error("The password must be 8 characters long");
   }
   const password = passwordResp.value;
-  const curPassword = process.env.WALLET_PASSWORD
-  if (!curPassword) {
-      throw new Error("WALLET_PASSWORD is not defined");
+
+  const BSC_WALLET_PRIVATE_KEY = process.env.BSC_WALLET_PRIVATE_KEY as Hex
+  if (!BSC_WALLET_PRIVATE_KEY) {
+      throw new Error("BSC_WALLET_PRIVATE_KEY is not defined");
+  }
+  const pk = decrypt(BSC_WALLET_PRIVATE_KEY, password)
+  const account = privateKeyToAccount(
+    pk as Hex
+  );
+  const address = process.env.BSC_WALLET_ADDRESS
+  if (!address) {
+      throw new Error("BSC_WALLET_ADDRESS is not defined");
   }
   
-  const passwordEncrypt = hashPassword(password)
-  if (passwordEncrypt != curPassword) {
+  if (account.address != address) {
     return await getPassword(true);
   }
+
   return passwordResp;
 }
 

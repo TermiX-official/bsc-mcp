@@ -77,13 +77,12 @@ export function registerSellMemeToken(server: McpServer) {
                     content: [
                         {
                             type: "text",
-                            text: `Create token successfully. https://bscscan.com/tx/${hash}`,
+                            text: `sell meme token successfully. https://bscscan.com/tx/${hash}`,
                             url: `https://bscscan.com/tx/${hash}`,
                         },
                     ],
                 };
             } catch (error) {
-                console.error("buy meme token failed:", error);
                 const errorMessage =
                     error instanceof Error ? error.message : String(error);
                 return {
