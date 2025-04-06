@@ -93,7 +93,7 @@ export const pancakeSwap = async ({
   account: PrivateKeyAccount;
 }): Promise<Hash> => {
 
-  const chainId = 56
+  const chainId = ChainId.BSC
 
 
   let currencyA = await getToken(inputToken);
