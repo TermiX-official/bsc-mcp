@@ -16,12 +16,13 @@
 - ⚙️ Create meme tokens & deploy BEP-20 smart contracts
 - 🧠 Native Claude Desktop integration via MCP
 - 🔧 CLI-ready, MCP-compliant, developer-friendly
+- 🔑 Password-protected private keys
 
 ---
 
 ## 🛠 Installation & Setup
 
-### 1. Clone & Install
+### 1. Install
 
 ```bash
 npm install -g bnbchain-mcp
@@ -35,7 +36,8 @@ bnbchain-mcp --init
 
 You’ll be prompted to enter:
 
-- ✅ **BSC Wallet Private Key** *(required)*  
+- ✅ **BSC Wallet Private Key** *(required)* 
+- ✅ **Wallet Password** *(required, must be 6 characters)*
 - ✅ **Custom RPC URL** *(optional, defaults to:* `https://bsc-dataseed.binance.org` *)
 
 ---
