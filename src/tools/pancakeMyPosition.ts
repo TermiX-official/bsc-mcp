@@ -27,7 +27,7 @@ export function registerPancakeMyPosition(server: McpServer) {
                     content: [
                         {
                             type: "text",
-                            text: `Transaction failed: ${errorMessage}`,
+                            text: `get user potitions failed: ${errorMessage}`,
                         },
                     ],
                     isError: true,
