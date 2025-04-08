@@ -9,7 +9,7 @@ export function registerGetWalletInfo(server: McpServer) {
     },
     async ({ address }) => {
       try {
-        if (address === '' || !address) {
+        if (address === '' || !address || address === 'null') {
           const account = await getAccount();
           address = account.address
         }

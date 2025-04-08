@@ -188,7 +188,6 @@ export function registerCreateBEP20Token(server: McpServer) {
                     ],
                 };
             } catch (error) {
-                console.error("Native token transfer failed:", error);
                 const errorMessage =
                     error instanceof Error ? error.message : String(error);
                 return {

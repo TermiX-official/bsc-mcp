@@ -8,6 +8,8 @@ import { fileURLToPath } from 'url';
 import { encrypt, hashPassword } from './PrivateAES.js';
 
 import dotenv from "dotenv";
+import { Hex } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
 dotenv.config();
 
 // Binance Gold Color
@@ -32,7 +34,6 @@ const showBanner = () => {
 
 // User Input Types
 interface UserInputs {
-    moralis?: string;
     walletPassword: string;
     privateKey: string;
     rpcUrl?: string;
@@ -44,10 +45,10 @@ const getInputs = async (): Promise<UserInputs> => {
         {
             type: 'password',
             name: 'walletPassword',
-            message: '🔐 Enter your Wallet Password (must be exactly 6 characters):',
+            message: '🔐 Enter your Wallet Password (must be exactly 8 characters):',
             validate: (val: string) => {
                 if (val.trim() === '') return 'Wallet Password is required!';
-                if (val.length !== 6) return 'Wallet Password must be exactly 6 characters!';
+                if (val.length !== 8) return 'Wallet Password must be exactly 8 characters!';
                 return true;
             },
         },
@@ -69,10 +70,11 @@ const getInputs = async (): Promise<UserInputs> => {
 };
 
 // Generate .env file
-const generateEnvFile = async (privateKey: string, walletPasswordEncrypt: string, rpcUrl?: string, moralis?: string): Promise<void> => {
-    const envContent = `BSC_WALLET_PRIVATE_KEY=${privateKey}
+const generateEnvFile = async (privateKey: string, address: string, rpcUrl?: string, ): Promise<void> => {
+    const envContent = `
+BSC_WALLET_PRIVATE_KEY=${privateKey}
+BSC_WALLET_ADDRESS=${address}
 BSC_RPC_URL=${rpcUrl || ''}
-WALLET_PASSWORD=${walletPasswordEncrypt || ''}
 `.trim();
 
     await fs.writeFile('.env', envContent);
@@ -80,7 +82,7 @@ WALLET_PASSWORD=${walletPasswordEncrypt || ''}
 };
 
 // Generate config object
-const generateConfig = async (privateKey: string, walletPasswordEncrypt: string, rpcUrl?: string, moralis?: string): Promise<any> => {
+const generateConfig = async (privateKey: string, address: string, rpcUrl?: string, ): Promise<any> => {
     const indexPath = path.resolve(__dirname, '..', 'build', 'index.js'); // one level up from cli/
 
     return {
@@ -89,8 +91,8 @@ const generateConfig = async (privateKey: string, walletPasswordEncrypt: string,
             args: [indexPath],
             env: {
                 BSC_WALLET_PRIVATE_KEY: privateKey,
+                BSC_WALLET_ADDRESS: address,
                 BSC_RPC_URL: rpcUrl || '',
-                WALLET_PASSWORD: walletPasswordEncrypt || '',
             },
             disabled: false,
             autoApprove: []
@@ -141,14 +143,17 @@ const saveFallbackConfig = async (config: object): Promise<void> => {
 const init = async () => {
     showBanner();
 
-    const { moralis, privateKey, rpcUrl, walletPassword } = await getInputs();
+    const { privateKey, rpcUrl, walletPassword } = await getInputs();
+    const _0xPrivateKey = privateKey.startsWith('0x') ? privateKey : `0x${privateKey}`
+    const account = privateKeyToAccount(
+        _0xPrivateKey as Hex
+    );
 
-    const privateKeyEncrypt = encrypt(privateKey, walletPassword);
-    const walletPasswordEncrypt = hashPassword(walletPassword)
+    const privateKeyEncrypt = encrypt(_0xPrivateKey, walletPassword);
 
-    await generateEnvFile(privateKeyEncrypt, walletPasswordEncrypt, rpcUrl, moralis);
+    await generateEnvFile(privateKeyEncrypt, account.address, rpcUrl);
 
-    const config = await generateConfig(privateKeyEncrypt, walletPasswordEncrypt, rpcUrl, moralis);
+    const config = await generateConfig(privateKeyEncrypt, account.address, rpcUrl);
 
     const { setupClaude } = await prompts({
         type: 'confirm',

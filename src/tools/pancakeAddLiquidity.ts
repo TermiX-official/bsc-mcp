@@ -47,13 +47,12 @@ export function registerPancakeAddLiquidity(server: McpServer) {
                     content: [
                         {
                             type: "text",
-                            text: `Create token successfully. https://bscscan.com/tx/${hash}`,
+                            text: `add liquidity to pancake successfully. https://bscscan.com/tx/${hash}`,
                             url: `https://bscscan.com/tx/${hash}`,
                         },
                     ],
                 };
             } catch (error) {
-                console.error("add liquidity to pancake failed:", error);
                 const errorMessage =
                     error instanceof Error ? error.message : String(error);
                 return {

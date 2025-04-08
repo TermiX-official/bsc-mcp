@@ -21,7 +21,6 @@ export function registerPancakeMyPosition(server: McpServer) {
                     ],
                 };
             } catch (error) {
-                console.error("get user potitions failed:", error);
                 const errorMessage =
                     error instanceof Error ? error.message : String(error);
                 return {
