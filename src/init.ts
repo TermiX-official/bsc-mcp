@@ -113,8 +113,13 @@ const configureClaude = async (config: object): Promise<boolean> => {
     }
     
     if (!fs.existsSync(claudePath)) {
-        console.log(chalk.red('❌ Claude is not installed or config path not found.'));
-        return false;
+        console.log(chalk.yellow('⚠️ Claude config file not found. Creating a new one with default configuration.'));
+        // Create a default configuration object
+        const defaultConfig = {
+            mcpServers: {}
+        };
+        // Write the default configuration to the file
+        await fs.writeJSON(claudePath, defaultConfig, { spaces: 2 });
     }
 
     
