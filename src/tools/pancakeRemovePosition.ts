@@ -26,7 +26,6 @@ export function registerPancakeRemovePosition(server: McpServer) {
                     ],
                 };
             } catch (error) {
-                console.error("remove liquidity position on panceke failed:", error);
                 const errorMessage =
                     error instanceof Error ? error.message : String(error);
                 return {

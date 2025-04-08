@@ -4,102 +4,10 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 
-import { Native, ERC20Token } from "@pancakeswap/sdk";
-import { hashPassword } from "./PrivateAES.js";
+import { decrypt, } from "./PrivateAES.js";
+import { privateKeyToAccount } from "viem/accounts";
 
-/**
- * Cache for PancakeSwap token list data
- */
-const pancakeswapTokensCache: {
-  tokens: any[];
-  lastFetchTime: number;
-} = {
-  tokens: [],
-  lastFetchTime: 0,
-};
 const platform = os.platform();
-
-/**
- * Fetch tokens from PancakeSwap token list
- * @returns Array of token data
- */
-export async function fetchPancakeswapTokens() {
-  const now = Math.floor(Date.now() / 1000);
-  if (
-    pancakeswapTokensCache.lastFetchTime > now - 300 &&
-    pancakeswapTokensCache.tokens.length > 0
-  ) {
-    return pancakeswapTokensCache.tokens;
-  }
-
-  try {
-    const response = await fetch(
-      "https://tokens.pancakeswap.finance/pancakeswap-extended.json"
-    );
-    if (!response.ok) {
-      throw new Error(
-        `Failed to fetch token list: ${response.status} ${response.statusText}`
-      );
-    }
-
-    const data = await response.json();
-    if (!data || !data.tokens || !Array.isArray(data.tokens)) {
-      throw new Error("Invalid token list format");
-    }
-
-    pancakeswapTokensCache.tokens = data.tokens;
-    pancakeswapTokensCache.lastFetchTime = now;
-    return data.tokens;
-  } catch (error) {
-    console.error("Error fetching PancakeSwap tokens:", error);
-    return [];
-  }
-}
-
-/**
- * Resolve a token input into a currency object.
- * If the token string is "BNB" (native) or a valid address, it is handled directly.
- * Otherwise it is treated as a token symbol or name and looked up from the PancakeSwap token list.
- * @param token - The token input (address, symbol or name)
- * @param defaultChainId - The default chain id to use (e.g. 56 for BSC)
- */
-export async function resolveCurrency(
-  token: string,
-  defaultChainId: number
-): Promise<{ currency: any; chainId: number }> {
-  if (token.toUpperCase() === "BNB") {
-    return {
-      currency: Native.onChain(defaultChainId),
-      chainId: defaultChainId,
-    };
-  }
-  // If token looks like an address (starts with "0x" and is 42 characters long)
-  if (token.startsWith("0x") && token.length === 42) {
-    return {
-      currency: new ERC20Token(defaultChainId, token as Hex, 18, ""),
-      chainId: defaultChainId,
-    };
-  }
-  // Otherwise, assume token is a name or symbol.
-  const tokens = await fetchPancakeswapTokens();
-  const tokenData = tokens.find(
-    (t: any) =>
-      t.symbol.toLowerCase() === token.toLowerCase() ||
-      t.name.toLowerCase() === token.toLowerCase()
-  );
-  if (!tokenData) {
-    throw new Error(`Token ${token} not found in PancakeSwap token list`);
-  }
-  return {
-    currency: new ERC20Token(
-      tokenData.chainId,
-      tokenData.address as Hex,
-      tokenData.decimals,
-      tokenData.symbol
-    ),
-    chainId: tokenData.chainId,
-  };
-}
 
 
 export function bigIntReplacer(key: string, value: any) {
@@ -124,19 +32,28 @@ export async function getPassword(isRetry?: boolean): Promise<InputResult> {
   if (!passwordResp.value) {
       throw new Error("You did not enter a password.");
   }
-  if (passwordResp.value.length != 6) {
-      throw new Error("The password must be 6 characters long");
+  if (passwordResp.value.length != 8) {
+      throw new Error("The password must be 8 characters long");
   }
   const password = passwordResp.value;
-  const curPassword = process.env.WALLET_PASSWORD
-  if (!curPassword) {
-      throw new Error("WALLET_PASSWORD is not defined");
+
+  const BSC_WALLET_PRIVATE_KEY = process.env.BSC_WALLET_PRIVATE_KEY as Hex
+  if (!BSC_WALLET_PRIVATE_KEY) {
+      throw new Error("BSC_WALLET_PRIVATE_KEY is not defined");
+  }
+  const pk = decrypt(BSC_WALLET_PRIVATE_KEY, password)
+  const account = privateKeyToAccount(
+    pk as Hex
+  );
+  const address = process.env.BSC_WALLET_ADDRESS
+  if (!address) {
+      throw new Error("BSC_WALLET_ADDRESS is not defined");
   }
   
-  const passwordEncrypt = hashPassword(password)
-  if (passwordEncrypt != curPassword) {
+  if (account.address != address) {
     return await getPassword(true);
   }
+
   return passwordResp;
 }
 
@@ -170,11 +87,11 @@ export function showInputBoxWithTerms(isRetry?: boolean): Promise<InputResult> {
                     exit repeat
                 end if
                 
-                if length of userPassword is 6 then
+                if length of userPassword is 8 then
                     exit repeat
                 end if
                 
-                display dialog "Password must be exactly 6 characters." buttons {"confirm"} default button "confirm" with icon caution
+                display dialog "Password must be exactly 8 characters." buttons {"confirm"} default button "confirm" with icon caution
             on error
                 -- Handle any errors (like when user clicks the red close button)
                 exit repeat
@@ -264,8 +181,8 @@ export function showInputBoxWithTerms(isRetry?: boolean): Promise<InputResult> {
         $button.Text = 'Confirm'
         $button.Add_Click({
             # Validate password length
-            if ($passwordTextBox.Text.Length -ne 6) {
-                $errorLabel.Text = 'Password must be exactly 6 characters.'
+            if ($passwordTextBox.Text.Length -ne 8) {
+                $errorLabel.Text = 'Password must be exactly 8 characters.'
             } else {
                 $form.DialogResult = [System.Windows.Forms.DialogResult]::OK
                 $form.Close()
