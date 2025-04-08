@@ -114,7 +114,6 @@ export function registerCreateBEP20Token(server: McpServer) {
                 });
 
                 if (transaction.status != "success") {
-                    console.log("Transaction failed", transaction)
                     throw new Error("Transaction failed");
                 }
 

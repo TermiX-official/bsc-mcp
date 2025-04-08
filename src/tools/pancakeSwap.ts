@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { pancakeSwap } from "../functions/pancakeSwapTool.js";
 import { getAccount, publicClient } from "../config.js";
+import { buildTxUrl, checkTransactionHash } from "../util.js";
 
 export function registerPancakeSwap(server: McpServer) {
   server.tool("PancakeSwap_Token_Exchange", "💱Exchange tokens on BNBChain using PancakeSwap DEX", {
@@ -10,32 +11,22 @@ export function registerPancakeSwap(server: McpServer) {
       amount: z.string(),
     },
     async ({ inputToken, outputToken, amount }) => {
+      let txHash = undefined;
       try {
         const account = await getAccount();
-        const txHash = await pancakeSwap({
+        txHash = await pancakeSwap({
           account,
           inputToken,
           outputToken,
           amount,
         });
-        const txUrl = `https://bscscan.com/tx/${txHash}`;
+        const txUrl = await checkTransactionHash(txHash)
         
-        const txReceipt = await publicClient.waitForTransactionReceipt({
-          hash: txHash,
-          retryCount: 300,
-          retryDelay: 100,
-      });
-
-
-        let status = "successfully";
-        if (txReceipt.status !== "success") {
-          status = "error"
-        } 
         return {
           content: [
             {
               type: "text",
-              text: `PancakeSwap transaction sent ${status}. ${txUrl}`,
+              text: `PancakeSwap transaction sent successfully. ${txUrl}`,
               url: txUrl,
             },
           ],
@@ -43,11 +34,13 @@ export function registerPancakeSwap(server: McpServer) {
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
+        const txUrl = buildTxUrl(txHash);
         return {
           content: [
             {
               type: "text",
-              text: `PancakeSwap transaction failed: ${errorMessage}`,
+              text: `transaction failed: ${errorMessage}`,
+              url: txUrl,
             },
           ],
           isError: true,

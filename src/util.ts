@@ -6,9 +6,30 @@ import os from 'os';
 
 import { decrypt, } from "./PrivateAES.js";
 import { privateKeyToAccount } from "viem/accounts";
+import { publicClient } from "./config.js";
 
 const platform = os.platform();
-
+export function buildTxUrl(txHash: Hex | undefined): string | undefined {
+  if (!txHash) {
+      return undefined;
+  }
+  const txUrl = `https://bscscan.com/tx/${txHash}`;
+  return txUrl
+}
+export async function checkTransactionHash(txHash: Hex): Promise<string> {
+  
+  const txReceipt = await publicClient.waitForTransactionReceipt({
+      hash: txHash,
+      retryCount: 300,
+      retryDelay: 100,
+  });
+  const txUrl = `https://bscscan.com/tx/${txHash}`;
+  if (txReceipt.status !== "success") {
+    // 请在bscscan上查看hash结果
+    throw new Error(`Please check the transaction results on bscscan, ${txUrl}`);
+  } 
+  return txUrl;
+}
 
 export function bigIntReplacer(key: string, value: any) {
   return typeof value === 'bigint' ? value.toString() : value;

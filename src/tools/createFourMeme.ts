@@ -229,7 +229,6 @@ export function registerCreateMemeToken(server: McpServer) {
         });
 
         if (transaction.status != "success") {
-          console.log("Transaction failed", transaction);
           throw new Error("Transaction failed");
         }
 

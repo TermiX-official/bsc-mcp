@@ -66,11 +66,10 @@ async function approveTokensIfNeeded(
                 address: tokenAddress,
                 abi: ERC20_ABI,
                 functionName: 'approve',
-                args: [spender, BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff')],
+                args: [spender, BigInt(amount)],
             });
 
             await publicClient.waitForTransactionReceipt({ hash });
-            console.log(`Approved ${token.symbol}`);
         }
     }
 }

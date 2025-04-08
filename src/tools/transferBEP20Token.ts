@@ -3,6 +3,7 @@ import { z } from "zod";
 import { parseUnits, getContract, Address, publicActions } from "viem"; 
 import { bep20abi } from "../lib/bep20Abi.js";
 import { getAccount, walletClient } from "../config.js";
+import { buildTxUrl, checkTransactionHash } from "../util.js";
 
 export function registerTransferBEP20Token(server: McpServer) {
   server.tool("Send_BEP20_Token", "📤Send any BEP-20 token to another wallet (requires wallet check first)", {
@@ -11,6 +12,7 @@ export function registerTransferBEP20Token(server: McpServer) {
       address: z.string(),
     },
     async ({ recipientAddress, amount, address }) => {
+      let txHash = undefined;
       try {
         // Get token details including address and decimals
 
@@ -27,28 +29,35 @@ export function registerTransferBEP20Token(server: McpServer) {
         // Parse the amount based on token decimals
         const parsedAmount = parseUnits(amount, decimals);
 
-        const hash = await contract.write.transfer([
+        txHash = await contract.write.transfer([
           `0x${recipientAddress.replace("0x", "")}`,
           parsedAmount,
         ], {
           gas: BigInt(100000),
         });
+        const txUrl = await checkTransactionHash(txHash)
+        
 
         return {
           content: [
             {
               type: "text",
-              text: `BEP-20 token transfer sent successfully. https://bscscan.com/tx/${hash}`,
-              url: `https://bscscan.com/tx/${hash}`,
+              text: `BEP-20 token transfer sent successfully. ${txUrl}`,
+              url: txUrl,
             },
           ],
         };
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
+        const txUrl = buildTxUrl(txHash);
         return {
           content: [
-            { type: "text", text: `Transaction failed: ${errorMessage}` },
+            {
+              type: "text",
+              text: `transaction failed: ${errorMessage}`,
+              url: txUrl,
+            },
           ],
           isError: true,
         };

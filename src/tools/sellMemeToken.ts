@@ -7,6 +7,7 @@ import {
 } from "viem";
 import { getAccount, publicClient, walletClient } from "../config.js";
 import { AddressConfig } from "../addressConfig.js";
+import { buildTxUrl, checkTransactionHash } from "../util.js";
 
 const tokenAbi = [
     { "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" }], "name": "allowance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" },
@@ -22,6 +23,7 @@ export function registerSellMemeToken(server: McpServer) {
         },
         async ({ token, tokenValue }) => {
 
+            let txHash = undefined;
             try {
 
                 const account = await getAccount();
@@ -49,7 +51,7 @@ export function registerSellMemeToken(server: McpServer) {
                 }
 
 
-                const hash = await walletClient(account).writeContract({
+                txHash = await walletClient(account).writeContract({
                     account,
                     address: AddressConfig.FourMemeSellTokenAMAPContract,
                     abi: [{
@@ -74,26 +76,30 @@ export function registerSellMemeToken(server: McpServer) {
                     args: [token as Hex, parseUnits(tokenValue, 18)],
                 });
 
+                const txUrl = await checkTransactionHash(txHash)
+        
                 return {
                     content: [
                         {
                             type: "text",
-                            text: `sell meme token successfully. https://bscscan.com/tx/${hash}`,
-                            url: `https://bscscan.com/tx/${hash}`,
+                            text: `sell meme token successfully. ${txUrl}`,
+                            url: txUrl,
                         },
                     ],
                 };
             } catch (error) {
                 const errorMessage =
-                    error instanceof Error ? error.message : String(error);
+                  error instanceof Error ? error.message : String(error);
+                const txUrl = buildTxUrl(txHash);
                 return {
-                    content: [
-                        {
-                            type: "text",
-                            text: `Transaction failed: ${errorMessage}`,
-                        },
-                    ],
-                    isError: true,
+                  content: [
+                    {
+                      type: "text",
+                      text: `transaction failed: ${errorMessage}`,
+                      url: txUrl,
+                    },
+                  ],
+                  isError: true,
                 };
             }
         }

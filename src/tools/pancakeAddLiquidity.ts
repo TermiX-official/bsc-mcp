@@ -11,6 +11,7 @@ import {
 } from '@pancakeswap/v3-sdk';
 import { getToken } from "../functions/pancakeSwapTool.js";
 import { getAccount, } from "../config.js";
+import { buildTxUrl, checkTransactionHash } from "../util.js";
 
 export function registerPancakeAddLiquidity(server: McpServer) {
 
@@ -22,6 +23,7 @@ export function registerPancakeAddLiquidity(server: McpServer) {
         },
         async ({ token0, token1, token0Amount, token1Amount }) => {
 
+            let txHash = undefined;
             try {
             
                 // Define tokens
@@ -34,7 +36,7 @@ export function registerPancakeAddLiquidity(server: McpServer) {
             
                 const account = await getAccount();
 
-                const hash = await addLiquidityV3(
+                txHash = await addLiquidityV3(
                     tokenA,
                     tokenB,
                     FeeAmount.MEDIUM, // 0.3%
@@ -43,23 +45,26 @@ export function registerPancakeAddLiquidity(server: McpServer) {
                     account,
                 );
 
+                const txUrl = await checkTransactionHash(txHash)
                 return {
                     content: [
                         {
                             type: "text",
-                            text: `add liquidity to pancake successfully. https://bscscan.com/tx/${hash}`,
-                            url: `https://bscscan.com/tx/${hash}`,
+                            text: `add liquidity to pancake successfully. ${txUrl}`,
+                            url: txUrl,
                         },
                     ],
                 };
             } catch (error) {
                 const errorMessage =
                     error instanceof Error ? error.message : String(error);
+                const txUrl = buildTxUrl(txHash);
                 return {
                     content: [
                         {
                             type: "text",
-                            text: `Transaction failed: ${errorMessage}`,
+                            text: `transaction failed: ${errorMessage}`,
+                            url: txUrl,
                         },
                     ],
                     isError: true,

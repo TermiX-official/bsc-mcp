@@ -3,6 +3,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
 import { removeLiquidityV3 } from "../functions/pancakeRemoveLiquidityTool.js";
 import { getAccount } from "../config.js";
+import { buildTxUrl, checkTransactionHash } from "../util.js";
 
 export function registerPancakeRemovePosition(server: McpServer) {
 
@@ -12,30 +13,35 @@ export function registerPancakeRemovePosition(server: McpServer) {
         },
         async ({ positionId, percent }) => {
 
+            let txHash = undefined;
             try {
 
                 const account = await getAccount();
-                const hash = await removeLiquidityV3(account, BigInt(positionId), percent);
+                txHash = await removeLiquidityV3(account, BigInt(positionId), percent);
+                const txUrl = await checkTransactionHash(txHash)
+                
                 return {
                     content: [
                         {
                             type: "text",
-                            text: `remove liquidity position on panceke successfully. https://bscscan.com/tx/${hash}`,
-                            url: `https://bscscan.com/tx/${hash}`,
+                            text: `remove liquidity position on panceke successfully. ${txUrl}`,
+                            url: txUrl,
                         },
                     ],
                 };
             } catch (error) {
                 const errorMessage =
-                    error instanceof Error ? error.message : String(error);
+                  error instanceof Error ? error.message : String(error);
+                const txUrl = buildTxUrl(txHash);
                 return {
-                    content: [
-                        {
-                            type: "text",
-                            text: `Transaction failed: ${errorMessage}`,
-                        },
-                    ],
-                    isError: true,
+                  content: [
+                    {
+                      type: "text",
+                      text: `transaction failed: ${errorMessage}`,
+                      url: txUrl,
+                    },
+                  ],
+                  isError: true,
                 };
             }
         }
