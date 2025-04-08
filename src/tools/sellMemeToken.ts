@@ -6,6 +6,7 @@ import {
     type Hex,
 } from "viem";
 import { getAccount, publicClient, walletClient } from "../config.js";
+import { AddressConfig } from "../addressConfig.js";
 
 const tokenAbi = [
     { "inputs": [{ "internalType": "address", "name": "owner", "type": "address" }, { "internalType": "address", "name": "spender", "type": "address" }], "name": "allowance", "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }], "stateMutability": "view", "type": "function" },
@@ -28,7 +29,7 @@ export function registerSellMemeToken(server: McpServer) {
                     address: token as Hex,
                     abi: tokenAbi,
                     functionName: 'allowance',
-                    args: [account.address, '0x5c952063c7fc8610FFDB798152D69F0B9550762b'],
+                    args: [account.address, AddressConfig.FourMemeSellTokenAMAPContract],
                 }) as bigint;
                 if (allowanceAmount < parseUnits(tokenValue, 18)) {
 
@@ -37,7 +38,7 @@ export function registerSellMemeToken(server: McpServer) {
                         address: token as Hex,
                         abi: tokenAbi,
                         functionName: 'approve',
-                        args: ['0x5c952063c7fc8610FFDB798152D69F0B9550762b', parseUnits(tokenValue, 18)],
+                        args: [AddressConfig.FourMemeSellTokenAMAPContract, parseUnits(tokenValue, 18)],
                     });
 
                     await publicClient.waitForTransactionReceipt({
@@ -50,7 +51,7 @@ export function registerSellMemeToken(server: McpServer) {
 
                 const hash = await walletClient(account).writeContract({
                     account,
-                    address: "0x5c952063c7fc8610FFDB798152D69F0B9550762b",
+                    address: AddressConfig.FourMemeSellTokenAMAPContract,
                     abi: [{
                         "inputs": [
                             {

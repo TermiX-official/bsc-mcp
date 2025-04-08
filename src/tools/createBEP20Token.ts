@@ -7,6 +7,7 @@ import {
   decodeEventLog,
 } from "viem";
 import { getAccount, publicClient, walletClient } from "../config.js";
+import { AddressConfig } from "../addressConfig.js";
 
 const createTokenABI = [
 	{
@@ -97,7 +98,7 @@ export function registerCreateBEP20Token(server: McpServer) {
                 
                 const account = await getAccount();
                 
-                const contract = "0xad9e6346E87Dfb4c08a47CBDFDF715A700C03918";
+                const contract = AddressConfig.CreateBEP20TokenContract;
                 const hash = await walletClient(account).writeContract({
                     account,
                     address: contract,

@@ -8,6 +8,7 @@ import {
 } from "viem";
 import { PrivateKeyAccount } from "viem/accounts";
 import { getAccount, publicClient, } from "../config.js";
+import { AddressConfig } from "../addressConfig.js";
 
 export const CreateFourMemeSchema = z.object({
   name: z.string().describe("name"),
@@ -189,7 +190,7 @@ export function registerCreateMemeToken(server: McpServer) {
         const loginToken = await loginFourMeme(account);
         const transactionData = await createMemeTokenData(args, loginToken);
 
-        const contract = "0x5c952063c7fc8610FFDB798152D69F0B9550762b";
+        const contract = AddressConfig.FourMemeCreateTokenContract;
         const hash = await walletClient(account).writeContract({
           account,
           address: contract,

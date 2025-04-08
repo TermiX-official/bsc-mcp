@@ -6,6 +6,7 @@ import {
     type Hex,
 } from "viem";
 import { getAccount, publicClient, walletClient } from "../config.js";
+import { AddressConfig } from "../addressConfig.js";
 
 
 export function registerBuyMemeToken(server: McpServer) {
@@ -23,7 +24,7 @@ export function registerBuyMemeToken(server: McpServer) {
                 const account = await getAccount();
                 
                 const [,,estimatedAmount,,,amountMsgValue,,] = await publicClient.readContract({
-                        address: '0xF251F83e40a78868FcfA3FA4599Dad6494E46034',
+                        address: AddressConfig.FourMemeTryBuyContract,
                         abi: [
                             {
                                 "inputs": [
@@ -105,7 +106,7 @@ export function registerBuyMemeToken(server: McpServer) {
 
                 const hash = await walletClient(account).writeContract({
                     account,
-                    address: "0x5c952063c7fc8610FFDB798152D69F0B9550762b",
+                    address: AddressConfig.FourMemeBuyTokenAMAPContract,
                     abi: [{
                         "inputs": [
                             {
