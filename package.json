@@ -63,6 +63,7 @@
     "@pancakeswap/sdk": "^5.8.8",
     "@pancakeswap/smart-router": "6.1.6",
     "@pancakeswap/tokens": "^0.6.24",
+    "@pancakeswap/v3-sdk": "^3.9.0",
     "chalk": "^5.4.1",
     "dotenv": "^16.4.7",
     "figlet": "^1.8.0",

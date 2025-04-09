@@ -2,11 +2,12 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import { 
-    Address, 
-    PrivateKeyAccount, 
-    formatUnits, 
-    parseAbi, 
+import { TickMath, SqrtPriceMath } from '@pancakeswap/v3-sdk';
+import {
+    Address,
+    PrivateKeyAccount,
+    formatUnits,
+    parseAbi,
 } from "viem";
 import { publicClient, } from '../config.js';
 
@@ -104,16 +105,16 @@ export const myPosition = async (accountAddress: Address) => {
                 args: [],
             },
         ]
-        
+
         const tokenInfo = await publicClient.multicall<any[]>({
             contracts: infoCalls,
             allowFailure: false,
         }) as any[]
         return {
             token,
-            symbol: tokenInfo[0] as number,
+            symbol: tokenInfo[0] as string,
             name: tokenInfo[1] as string,
-            decimals: tokenInfo[2] as string,
+            decimals: Number(tokenInfo[2]),
         }
     }
 
@@ -173,30 +174,34 @@ export const myPosition = async (accountAddress: Address) => {
             feeTier: positions[i][4],
             positionId: nftIds[i],
         }
+        const sqrtPriceX96 = TickMath.getSqrtRatioAtTick(positionInfo.tickCurrent);
+        const sqrtPriceAX96 = TickMath.getSqrtRatioAtTick(positionInfo.tickLower);
+        const sqrtPriceBX96 = TickMath.getSqrtRatioAtTick(positionInfo.tickUpper);
+        const liquidity = BigInt(positionInfo.liquidity);
         let amount0;
         let amount1;
-        const currency = Math.pow(1.0001, positionInfo.tickCurrent / 2);
-        const upper = Math.pow(1.0001, positionInfo.tickUpper / 2);
-        const lower = Math.pow(1.0001, positionInfo.tickLower / 2);
-
         if (positionInfo.tickCurrent < positionInfo.tickLower) {
-            amount1 = 0;
-            amount0 = Math.floor(Number(positionInfo.liquidity) * (upper - lower) / (upper * lower));
+            amount0 = SqrtPriceMath.getAmount0Delta(sqrtPriceAX96, sqrtPriceBX96, liquidity,
+                false);
+            amount1 = BigInt(0);
         } else if (positionInfo.tickCurrent > positionInfo.tickUpper) {
-            amount0 = 0;
-            amount1 = Math.floor(Number(positionInfo.liquidity) * (lower - upper) / (upper * lower));
+            amount0 = BigInt(0);
+            amount1 = SqrtPriceMath.getAmount1Delta(sqrtPriceAX96, sqrtPriceBX96, liquidity,
+                false);
         } else {
-            amount0 = Math.floor(Number(positionInfo.liquidity) * (upper - currency) / (upper * currency));
-            amount1 = Math.floor(Number(positionInfo.liquidity) * (currency - lower));
+            amount0 = SqrtPriceMath.getAmount0Delta(sqrtPriceX96, sqrtPriceBX96, liquidity,
+                false);
+            amount1 = SqrtPriceMath.getAmount1Delta(sqrtPriceAX96, sqrtPriceX96, liquidity,
+                false);
         }
         positionInfos.push({
             ...positionInfo,
             amount0,
             amount1,
-            amount0Format: formatUnits(BigInt(amount0), Number(positionInfo.token0.decimals)),
-            amount1Format: formatUnits(BigInt(amount1), Number(positionInfo.token1.decimals)),
-            
-        })
+            amount0Format: formatUnits(amount0, Number(positionInfo.token0.decimals)),
+            amount1Format: formatUnits(amount1, Number(positionInfo.token1.decimals)),
+        });
+
     }
 
     return positionInfos;

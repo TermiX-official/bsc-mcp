@@ -8,18 +8,21 @@ import {
     Pool,
     Position,
     nearestUsableTick,
-    FeeAmount
+    FeeAmount,
+    encodeSqrtRatioX96
 } from '@pancakeswap/v3-sdk';
-import { Currency, CurrencyAmount, Percent, Token } from '@pancakeswap/sdk';
+import { ChainId, Currency, CurrencyAmount, Percent, Token } from '@pancakeswap/sdk';
 
 import dotenv from 'dotenv';
 import { publicClient, walletClient } from '../config.js';
+import { TICK_SPACINGS, TickMath } from "@pancakeswap/v3-sdk";
+import { FACTORY_ADDRESSES, NFT_POSITION_MANAGER_ADDRESSES } from '@pancakeswap/v3-sdk';
+
+const POSITION_MANAGER_ADDRESS = NFT_POSITION_MANAGER_ADDRESSES[ChainId.BSC];
+const FACTORY_ADDRESS = FACTORY_ADDRESSES[ChainId.BSC];
 
 dotenv.config();
 
-// PancakeSwap V3 contract addresses (BSC)
-const POSITION_MANAGER_ADDRESS = '0x46A15B0b27311cedF172AB29E4f4766fbE7F4364' as Address;
-const FACTORY_ADDRESS = '0x0BFbCF9fa4f9C56B0F40a671Ad40E0805A091865' as Address;
 
 // Contract ABI definitions
 const FACTORY_ABI = parseAbi([
@@ -190,15 +193,17 @@ export async function addLiquidityV3(
         liquidity.toString(),
         (slot0 as any)[1] // tick
     );
-
-    const tickSpacing = fee / 50;
-    const currentTick = pool.tickCurrent;
-
-    const lowerPriceTick = currentTick - Math.floor(Math.abs(Math.log(priceLower) / Math.log(1.0001)));
-    const upperPriceTick = currentTick + Math.floor(Math.abs(Math.log(priceUpper) / Math.log(1.0001)));
-
+    // Retrieve tickSpacing from the SDK constants
+    const tickSpacing = TICK_SPACINGS[fee]; // fee should correspond to a valid
+    // Convert prices to square root ratio and then to ticks
+    const priceLowerRatio = encodeSqrtRatioX96(priceLower * 1e18, 1e18);
+    const priceUpperRatio = encodeSqrtRatioX96(priceUpper * 1e18, 1e18);
+    const lowerPriceTick = TickMath.getTickAtSqrtRatio(priceLowerRatio);
+    const upperPriceTick = TickMath.getTickAtSqrtRatio(priceUpperRatio);
+    // Round ticks to the nearest valid tick
     const tickLower = nearestUsableTick(lowerPriceTick, tickSpacing);
     const tickUpper = nearestUsableTick(upperPriceTick, tickSpacing);
+
 
     const position = Position.fromAmounts({
         pool,
