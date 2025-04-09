@@ -16,12 +16,13 @@ import { registerPancakeAddLiquidity } from "./tools/pancakeAddLiquidity.js";
 import { registerPancakeMyPosition } from "./tools/pancakeMyPosition.js";
 import { registerPancakeRemovePosition } from "./tools/pancakeRemovePosition.js";
 import { registerGoplusSecurityCheck } from "./tools/goplusSecurityCheck.js";
+import { registerQueryMemeTokenDetails } from "./tools/queryMemeTokenDetails.js";
 
 // Main server entry
 export async function main() {
     const server = new McpServer({
         name: "bsc-mcp",
-        version: "1.0.0",
+        version: "1.0.0"
     });
 
     // Register all tools
@@ -37,6 +38,7 @@ export async function main() {
     registerPancakeMyPosition(server);
     registerPancakeRemovePosition(server);
     registerGoplusSecurityCheck(server);
+    registerQueryMemeTokenDetails(server);
 
     const transport = new StdioServerTransport();
 
