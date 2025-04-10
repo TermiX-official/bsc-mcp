@@ -5,7 +5,7 @@ import path from 'path';
 import fs from 'fs-extra';
 import os from 'os';
 import { fileURLToPath } from 'url';
-import { encrypt, hashPassword } from './PrivateAES.js';
+import { encryptPrivateKey } from './PrivateAES.js';
 
 import dotenv from "dotenv";
 import { Hex } from 'viem';
@@ -154,7 +154,7 @@ const init = async () => {
         _0xPrivateKey as Hex
     );
 
-    const privateKeyEncrypt = encrypt(_0xPrivateKey, walletPassword);
+    const privateKeyEncrypt = await encryptPrivateKey(_0xPrivateKey, walletPassword);
 
     await generateEnvFile(privateKeyEncrypt, account.address, rpcUrl);
 
