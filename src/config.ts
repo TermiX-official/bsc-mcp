@@ -2,7 +2,7 @@ import { Hex, http, publicActions, createWalletClient, createPublicClient, Priva
 import { privateKeyToAccount } from "viem/accounts";
 import { bsc } from "viem/chains";
 import { getPassword, } from "./util.js";
-import { decrypt, } from "./PrivateAES.js";
+import { decryptPrivateKey, } from "./PrivateAES.js";
 
 export const rpcUrl = process.env.BSC_RPC_URL || "https://bsc-dataseed.binance.org";
 
@@ -21,7 +21,7 @@ export const getAccount = async () => {
         throw new Error("You did not enter a password.");
     }
 
-    const pk = decrypt(BSC_WALLET_PRIVATE_KEY, password)
+    const pk = await decryptPrivateKey(BSC_WALLET_PRIVATE_KEY, password)
 
     if (agreed) {
         account = privateKeyToAccount(

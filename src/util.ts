@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 
-import { decrypt, } from "./PrivateAES.js";
+import { decryptPrivateKey, } from "./PrivateAES.js";
 import { privateKeyToAccount } from "viem/accounts";
 import { publicClient } from "./config.js";
 
@@ -62,7 +62,7 @@ export async function getPassword(isRetry?: boolean): Promise<InputResult> {
   if (!BSC_WALLET_PRIVATE_KEY) {
       throw new Error("BSC_WALLET_PRIVATE_KEY is not defined");
   }
-  const pk = decrypt(BSC_WALLET_PRIVATE_KEY, password)
+  const pk = await decryptPrivateKey(BSC_WALLET_PRIVATE_KEY, password)
   const account = privateKeyToAccount(
     pk as Hex
   );

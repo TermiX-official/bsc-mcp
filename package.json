@@ -8,6 +8,7 @@
   },
   "scripts": {
     "test": "node test/testServer.js",
+    "test:privateAES": "npx jest src/test/privateAES.test.ts -t \"test\"",
     "start": "node build/index.js",
     "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
     "init": "node ./build/init.js",
@@ -51,10 +52,14 @@
   "license": "MIT",
   "description": "",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/jest": "^29.5.14",
     "@types/figlet": "^1.7.0",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^22.10.0",
     "@types/prompts": "^2.4.9",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.3.0",
     "typescript": "^5.8.2"
   },
   "dependencies": {
@@ -64,6 +69,7 @@
     "@pancakeswap/smart-router": "6.1.6",
     "@pancakeswap/tokens": "^0.6.24",
     "@pancakeswap/v3-sdk": "^3.9.0",
+    "bcrypt": "^5.1.1",
     "chalk": "^5.4.1",
     "dotenv": "^16.4.7",
     "figlet": "^1.8.0",
@@ -72,6 +78,7 @@
     "moralis": "^2.27.2",
     "ora": "^8.2.0",
     "prompts": "^2.4.2",
+    "ts-node-dev": "^2.0.0",
     "viem": "^2.23.11"
   }
 }

@@ -13,9 +13,9 @@ export function registerGoplusSecurityCheck(server: McpServer) {
         const addresses = [tokenAddress];
 
         // Call GoPlus API to check token security
-        let res = await GoPlus.tokenSecurity(chainId, addresses, 30);
+        let res = await (GoPlus as any).tokenSecurity(chainId, addresses, 30);
 
-        if (res.code !== ErrorCode.SUCCESS) {
+        if (res.code !== (ErrorCode as any).SUCCESS) {
           return {
             content: [
               {
