@@ -53,8 +53,8 @@ export async function getPassword(isRetry?: boolean): Promise<InputResult> {
   if (!passwordResp.value) {
       throw new Error("You did not enter a password.");
   }
-  if (passwordResp.value.length != 8) {
-      throw new Error("The password must be 8 characters long");
+  if (passwordResp.value.length < 8 || passwordResp.value.length > 20) {
+      throw new Error("The password must be between 8 and 20 characters.");
   }
   const password = passwordResp.value;
 
@@ -62,19 +62,24 @@ export async function getPassword(isRetry?: boolean): Promise<InputResult> {
   if (!BSC_WALLET_PRIVATE_KEY) {
       throw new Error("BSC_WALLET_PRIVATE_KEY is not defined");
   }
-  const pk = await decryptPrivateKey(BSC_WALLET_PRIVATE_KEY, password)
-  const account = privateKeyToAccount(
-    pk as Hex
-  );
-  const address = process.env.BSC_WALLET_ADDRESS
-  if (!address) {
-      throw new Error("BSC_WALLET_ADDRESS is not defined");
-  }
-  
-  if (account.address != address) {
+  try {
+
+    const pk = await decryptPrivateKey(BSC_WALLET_PRIVATE_KEY, password)
+    const account = privateKeyToAccount(
+      pk as Hex
+    );
+    const address = process.env.BSC_WALLET_ADDRESS
+    if (!address) {
+        throw new Error("BSC_WALLET_ADDRESS is not defined");
+    }
+    
+    if (account.address != address) {
+      return await getPassword(true);
+    }
+
+  } catch (error) {
     return await getPassword(true);
   }
-
   return passwordResp;
 }
 
@@ -108,11 +113,11 @@ export function showInputBoxWithTerms(isRetry?: boolean): Promise<InputResult> {
                     exit repeat
                 end if
                 
-                if length of userPassword is 8 then
+                if (length of userPassword ≥ 8) and (length of userPassword ≤ 20) then
                     exit repeat
                 end if
                 
-                display dialog "Password must be exactly 8 characters." buttons {"confirm"} default button "confirm" with icon caution
+                display dialog "Wallet Password must be between 8 and 20 characters!" buttons {"confirm"} default button "confirm" with icon caution
             on error
                 -- Handle any errors (like when user clicks the red close button)
                 exit repeat
@@ -202,8 +207,8 @@ export function showInputBoxWithTerms(isRetry?: boolean): Promise<InputResult> {
         $button.Text = 'Confirm'
         $button.Add_Click({
             # Validate password length
-            if ($passwordTextBox.Text.Length -ne 8) {
-                $errorLabel.Text = 'Password must be exactly 8 characters.'
+            if ($passwordTextBox.Text.Length -lt 8 -or $passwordTextBox.Text.Length -gt 20) {
+                $errorLabel.Text = 'Wallet Password must be between 8 and 20 characters!'
             } else {
                 $form.DialogResult = [System.Windows.Forms.DialogResult]::OK
                 $form.Close()

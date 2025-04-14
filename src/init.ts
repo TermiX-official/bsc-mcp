@@ -45,10 +45,10 @@ const getInputs = async (): Promise<UserInputs> => {
         {
             type: 'password',
             name: 'walletPassword',
-            message: '🔐 Enter your Wallet Password (must be exactly 8 characters):',
+            message: '🔐 Enter your Wallet Password (The password must be between 8 and 20 characters):',
             validate: (val: string) => {
                 if (val.trim() === '') return 'Wallet Password is required!';
-                if (val.length !== 8) return 'Wallet Password must be exactly 8 characters!';
+                if (val.length < 8 || val.length > 20) return 'Wallet Password must be between 8 and 20 characters!';
                 return true;
             },
         },
