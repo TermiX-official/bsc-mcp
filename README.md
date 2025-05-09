@@ -2,9 +2,9 @@
 
 ---
 
-## 📦 BNBChain MCP – Binance Smart Chain Tool Server (MCP + CLI Ready)
+## 📦 BNBChain MCP – BNB Smart Chain Tool Server (MCP + CLI Ready)
 
-> A plug-and-play MCP tool server to **send BNB**, **transfer BEP-20 tokens**, **deploy tokens**, and **interact with smart contracts** on the **Binance Smart Chain (BSC)** — built for **Claude Desktop**, **AI agents**, and **developers.**
+> A plug-and-play MCP tool server to **send BNB**, **transfer BEP-20 tokens**, **deploy tokens**, and **interact with smart contracts** on the **BNB Smart Chain (BSC)** — built for **Claude Desktop**, **AI agents**, and **developers.**
 
 ---
 
