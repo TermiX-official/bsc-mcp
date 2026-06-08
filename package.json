@@ -6,6 +6,14 @@
   "bin": {
     "bnbchain-mcp": "build/index.js"
   },
+  "homepage": "https://github.com/TermiX-official/bsc-mcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TermiX-official/bsc-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TermiX-official/bsc-mcp/issues"
+  },
   "scripts": {
     "test": "node test/testServer.js",
     "test:privateAES": "npx jest src/test/privateAES.test.ts -t \"test\"",
