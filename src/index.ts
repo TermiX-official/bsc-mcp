@@ -4,8 +4,6 @@ import { parseArgs } from 'node:util';
 import { init } from './cli/init.js';
 import { version } from './cli/version.js';
 import { printHelp } from './cli/help.js';
-import { main } from './main.js';
-
 
 process.on('uncaughtException', (error: Error) => {
   console.error('❌ Uncaught exception:', error);
@@ -48,8 +46,12 @@ if (values.version) {
 }
 
 if (values.init) {
-  await init(); // run init.js logic
+  await init();
 } else {
+  // Runtime modules may import wallet-dependent code. Load them only after
+  // CLI-only commands have been handled so `--init` works before a wallet
+  // key exists in the environment.
+  const { main } = await import('./main.js');
   main().catch((error: Error) => {
     console.error('❌ Fatal error in main():', error);
     process.exit(1);
