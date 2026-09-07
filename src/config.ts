@@ -122,6 +122,10 @@ export const getAccount = async () => {
 
     const pk = await decryptPrivateKey(BSC_WALLET_PRIVATE_KEY, password);
 
+    if (!pk) {
+        throw new Error("Failed to decrypt private key. Check your password.");
+    }
+
     if (agreed) {
 
         obfuscatedPrivateKey.updata(pk as string);
