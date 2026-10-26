@@ -45,8 +45,8 @@ export function registerSellMemeToken(server: McpServer) {
 
                     await publicClient.waitForTransactionReceipt({
                         hash: hash,
-                        retryCount: 300,
-                        retryDelay: 100,
+                        retryCount: 20,
+                        retryDelay: 1500,
                     });
                 }
 

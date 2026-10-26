@@ -3,6 +3,7 @@ import { exec } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
+import readline from 'readline';
 
 import { decryptPrivateKey, } from "./PrivateAES.js";
 import { privateKeyToAccount } from "viem/accounts";
@@ -20,8 +21,8 @@ export async function checkTransactionHash(txHash: Hex): Promise<string> {
 
   const txReceipt = await publicClient.waitForTransactionReceipt({
     hash: txHash,
-    retryCount: 300,
-    retryDelay: 100,
+    retryCount: 20,
+    retryDelay: 1500,
   });
   const txUrl = `https://bscscan.com/tx/${txHash}`;
   if (txReceipt.status !== "success") {
@@ -277,8 +278,25 @@ export function showInputBoxWithTerms(isRetry?: boolean): Promise<InputResult> {
         });
         break;
 
-      default:
-        reject(new Error(`Unsupported platform and command-line input is not available: ${platform}`));
+      default: {
+        // Linux and other Unix-like platforms: use readline for terminal input
+        const rl = readline.createInterface({
+          input: process.stdin,
+          output: process.stdout,
+        });
+
+        const passwordPrompt = isRetry ? "Wrong password, please try again: " : "Enter your Wallet Password: ";
+        rl.question(passwordPrompt, (password) => {
+          rl.question("Stay signed in for 1 hour? (yes/no): ", (agreeRaw) => {
+            rl.close();
+            resolve({
+              value: password,
+              agreed: agreeRaw.trim().toLowerCase() === "yes",
+            });
+          });
+        });
+        break;
+      }
     }
   });
 }
