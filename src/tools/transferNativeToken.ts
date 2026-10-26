@@ -6,8 +6,8 @@ import { buildTxUrl, checkTransactionHash } from "../util.js";
 
 export function registerTransferNativeToken(server: McpServer) {
   server.tool("Send_BNB", "💎Transfer native token (BNB), Before execution, check the wallet information first", {
-      recipientAddress: z.string(),
-      amount: z.string(),
+      recipientAddress: z.string().regex(/^0x[0-9a-fA-F]{40}$/, "Invalid EVM address"),
+      amount: z.string().regex(/^\d+(\.\d+)?$/, "Amount must be a positive number"),
     },
     async ({ recipientAddress, amount }) => {
       let txHash = undefined;

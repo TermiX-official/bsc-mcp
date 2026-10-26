@@ -7,9 +7,9 @@ import { buildTxUrl, checkTransactionHash } from "../util.js";
 
 export function registerTransferBEP20Token(server: McpServer) {
   server.tool("Send_BEP20_Token", "📤Send any BEP-20 token to another wallet (requires wallet check first)", {
-      recipientAddress: z.string(),
-      amount: z.string(),
-      address: z.string(),
+      recipientAddress: z.string().regex(/^0x[0-9a-fA-F]{40}$/, "Invalid EVM address"),
+      amount: z.string().regex(/^\d+(\.\d+)?$/, "Amount must be a positive number"),
+      address: z.string().regex(/^0x[0-9a-fA-F]{40}$/, "Invalid token contract address"),
     },
     async ({ recipientAddress, amount, address }) => {
       let txHash = undefined;
@@ -32,9 +32,7 @@ export function registerTransferBEP20Token(server: McpServer) {
         txHash = await contract.write.transfer([
           `0x${recipientAddress.replace("0x", "")}`,
           parsedAmount,
-        ], {
-          gas: BigInt(100000),
-        });
+        ]);
         const txUrl = await checkTransactionHash(txHash)
         
 
